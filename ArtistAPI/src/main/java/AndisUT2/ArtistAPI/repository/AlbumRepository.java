@@ -1,6 +1,6 @@
-package AndisUT2.ArtistAPI.Repository;
+package AndisUT2.ArtistAPI.repository;
 
-import AndisUT2.ArtistAPI.Model.Album;
+import AndisUT2.ArtistAPI.model.Album;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;

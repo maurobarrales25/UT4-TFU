@@ -1,9 +1,9 @@
-package AndisUT2.ArtistAPI.Service;
+package AndisUT2.ArtistAPI.service;
 
-import AndisUT2.ArtistAPI.Model.Album;
-import AndisUT2.ArtistAPI.Model.Artist;
-import AndisUT2.ArtistAPI.Model.Song;
-import AndisUT2.ArtistAPI.Repository.SongRepository;
+import AndisUT2.ArtistAPI.model.Album;
+import AndisUT2.ArtistAPI.model.Artist;
+import AndisUT2.ArtistAPI.model.Song;
+import AndisUT2.ArtistAPI.repository.SongRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;

@@ -1,25 +1,28 @@
-package AndisUT2.ArtistAPI.Service;
+package AndisUT2.ArtistAPI.service;
 
-import AndisUT2.ArtistAPI.Model.Album;
-import AndisUT2.ArtistAPI.Model.Artist;
-import AndisUT2.ArtistAPI.Repository.AlbumRepository;
+import AndisUT2.ArtistAPI.events.DTOevents.AlbumUpdateEvent;
+import AndisUT2.ArtistAPI.events.Producer.AlbumProducer;
+import AndisUT2.ArtistAPI.model.Album;
+import AndisUT2.ArtistAPI.model.Artist;
+import AndisUT2.ArtistAPI.repository.AlbumRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.rmi.NoSuchObjectException;
 import java.util.List;
 
 @Service
 public class AlbumService {
 
     private final AlbumRepository albumRepository;
-
     private final ArtistService artistService;
+    private final AlbumProducer albumProducer;
 
-    public AlbumService(AlbumRepository albumRepository, ArtistService artistService) {
+
+    public AlbumService(AlbumRepository albumRepository, ArtistService artistService, AlbumProducer albumProducer) {
         this.albumRepository = albumRepository;
         this.artistService = artistService;
+        this.albumProducer = albumProducer;
     }
 
     public Album getAlbumByName(String name){
@@ -27,7 +30,7 @@ public class AlbumService {
         if(album == null){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    "Album no encontrado con nombre: " + name);
+                    "No se encontro Album con nombre: " + name);
         }
         return album;
     }
@@ -38,7 +41,7 @@ public class AlbumService {
         if(album == null){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    "Album no encontrado con id: " + id);
+                    "No se encontro Album con id: " + id);
         }
         return album;
     }
@@ -71,7 +74,16 @@ public class AlbumService {
                     "Album con ID " + albumId + " no encontrado para actualizar.");
         }
         album.setAlbumName(newName);
-        return albumRepository.updateAlbum(album);
+        albumRepository.updateAlbum(album);
+
+        Artist artist = artistService.getArtistById(album.getArtistId());
+        AlbumUpdateEvent event= new AlbumUpdateEvent(album.getAlbumId(),album.getAlbumName(),
+                artist.getArtistID(), artist.getName());
+
+        String kafkaKey = String.format("album-%d", album.getAlbumId());
+        albumProducer.send("album-update", kafkaKey, event);
+
+        return album;
     }
 
 }

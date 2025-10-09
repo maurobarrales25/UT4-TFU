@@ -1,4 +1,4 @@
-package AndisUT2.ArtistAPI.Model;
+package AndisUT2.ArtistAPI.model;
 
 
 

@@ -1,7 +1,7 @@
-package AndisUT2.ArtistAPI.Controller;
+package AndisUT2.ArtistAPI.controller;
 
-import AndisUT2.ArtistAPI.Model.Album;
-import AndisUT2.ArtistAPI.Service.AlbumService;
+import AndisUT2.ArtistAPI.model.Album;
+import AndisUT2.ArtistAPI.service.AlbumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
