@@ -25,20 +25,18 @@ public class KafkaConfig {
     @Value("${spring.kafka.producer.value-serializer}")
     private String valueSerializer;
 
-    @Value("${spring.kafka.producer.acks}")
-    private String acks;
-
-    @Value("${spring.kafka.producer.retries}")
-    private String retries;
+    @Value("${spring.kafka.producer.enable.idempotence}")
+    private boolean idempotence;
 
     @Value("${spring.kafka.producer.properties.retry.backoff.ms}")
-    private String retryBackoffMs;
+    private int retryBackoffMs;
 
     @Value("${spring.kafka.producer.properties.linger}")
-    private String linger;
+    private int linger;
 
-    @Value("${spring.kafka.producer.properties.request.tiemout.ms}")
-    private String requestTiemout;
+    @Value("${spring.kafka.producer.properties.request.timeout.ms}")
+    private int requestTimeout;
+
 
     Map<String, Object> producerConfigs(){
         Map<String, Object> config = new HashMap<>();
@@ -46,11 +44,10 @@ public class KafkaConfig {
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, keySerializer);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, valueSerializer);
-        config.put(ProducerConfig.ACKS_CONFIG, acks);
-        config.put(ProducerConfig.RETRIES_CONFIG, retries);
+        config.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, idempotence);
         config.put(ProducerConfig.RETRY_BACKOFF_MS_CONFIG, retryBackoffMs);
         config.put(ProducerConfig.LINGER_MS_CONFIG, linger);
-        config.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, requestTiemout);
+        config.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, requestTimeout);
 
         return config;
     }
