@@ -1,0 +1,14 @@
+# Maven
+/target/
+# IntelliJ
+.idea/
+# Logs
+*.log
+# OS
+.DS_Store
+Thumbs.db
+# Binaries and dependencies
+*.jar
+*.war
+/mvnw
+/mvnw.cmd
