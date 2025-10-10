@@ -49,7 +49,7 @@ public class AlbumController {
         return ResponseEntity.ok(album);
     }
 
-    @PostMapping("/update-by-id")
+    @PatchMapping("/update-by-id")
     public ResponseEntity<Album> updateAlbumById(@RequestParam int id, @RequestParam String newName){
         Album album = albumService.updateAlbum(id, newName);
         return ResponseEntity.ok(album);

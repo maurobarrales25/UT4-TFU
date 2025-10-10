@@ -1,7 +1,7 @@
 USE ut2artist;
 
-INSERT IGNORE INTO artist (name, genre) VALUES ('Queen');
-INSERT IGNORE INTO artist (name, genre) VALUES ('Foo Fighters');
+INSERT IGNORE INTO artist (name) VALUES ('Queen');
+INSERT IGNORE INTO artist (name) VALUES ('Foo Fighters');
 
 INSERT IGNORE INTO album(album_name, artist_id) VALUES ('Echoes of Silence Patience and Grace', '2');
 

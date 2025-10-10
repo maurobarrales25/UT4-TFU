@@ -1,59 +1,97 @@
+version: '3.9'
+
 services:
-  broker1:
-    image: apache/kafka:4.0.0
-    container_name: broker1
+  # ---------------- API GATEWAY ----------------
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
     ports:
-      - "9092:9092"
-      - "9093:9093"  # Controller listener
-    environment:
-      KAFKA_NODE_ID: 1
-      KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@broker1:9093,2@broker2:9093,3@broker3:9093"
-      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_LOG_DIRS: /var/lib/kafka/data
-    volumes:
-      - broker1_data:/var/lib/kafka/data
+      - "${GATEWAY_PORT}:80"
+    depends_on:
+      - artist-api
+      - user-api
+      - playlist-api
 
-  broker2:
-    image: apache/kafka:4.0.0
-    container_name: broker2
+  # ---------------- API DE ARTISTAS ----------------
+  artist-api:
+    build: ./ArtistAPI
+    container_name: artist-api
     ports:
-      - "9094:9092"
-      - "9095:9093"
-    environment:
-      KAFKA_NODE_ID: 2
-      KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@broker1:9093,2@broker2:9093,3@broker3:9093"
-      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9094
-      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_LOG_DIRS: /var/lib/kafka/data
-    volumes:
-      - broker2_data:/var/lib/kafka/data
+      - "${ARTIST_API_PORT}:8080"
+    env_file:
+      - ./ArtistAPI/.env
+    depends_on:
+      - artist-db
 
-  broker3:
-    image: apache/kafka:4.0.0
-    container_name: broker3
+  artist-db:
+    image: mysql:8.0
+    container_name: artist-db
+    env_file:
+      - ./ArtistAPI/.env
+    volumes:
+      - artist-db-data:/var/lib/mysql
     ports:
-      - "9096:9092"
-      - "9097:9093"
-    environment:
-      KAFKA_NODE_ID: 3
-      KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@broker1:9093,2@broker2:9093,3@broker3:9093"
-      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9096
-      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_LOG_DIRS: /var/lib/kafka/data
-    volumes:
-      - broker3_data:/var/lib/kafka/data
+      - "${MYSQL_PORT}:3306"
 
+  # ---------------- API DE USUARIOS ----------------
+  user-api:
+    build: ./UserAPI
+    container_name: user-api
+    ports:
+      - "${USERS_API_PORT}:8000"
+    env_file:
+      - ./UserAPI/.env
+    depends_on:
+      - user-db
+
+  user-db:
+    image: postgres:17
+    container_name: user-db
+    env_file:
+      - ./UserAPI/.env
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+      - ./UserAPI/pginit:/docker-entrypoint-initdb.d
+      - ./UserAPI/app:/app
+    ports:
+      - "${POSTGRES_PORT}:5432"
+
+  # ---------------- API DE PLAYLISTS ----------------
+  playlist-api:
+    build:
+      context: ./PlaylistAPI
+      dockerfile: Dockerfile
+    container_name: playlist-api
+    restart: always
+    ports:
+      - "${PLAYLIST_API_PORT}:8080"
+    depends_on:
+      - mongo
+    env_file:
+      - ./.env
+    volumes:
+      - ./PlaylistAPI/app:/app
+
+  mongo:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - "${MONGO_PORT}:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+
+  # ---------------- KAFKA BROKERS ----------------
+
+
+
+# ---------------- VOLUMES ----------------
 volumes:
-  broker1_data:
-  broker2_data:
-  broker3_data:
+  artist-db-data:
+  user-db-data:
+  mongo_data:
+
+

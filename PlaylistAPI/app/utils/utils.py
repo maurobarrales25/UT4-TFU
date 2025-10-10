@@ -13,33 +13,37 @@ def serialize_object_ids(docs: List):
 
 async def get_user(user_id):
     async with httpx.AsyncClient() as client:
-        response = await client.get(f"http://user-api:8000/api/users/{str(user_id)}")
+        response = await client.get(f"http://user-api:8000/usersapi/api/users/{str(user_id)}")
 
         data = response.json()
 
         if data.get("detail"):
             raise HTTPException(status_code=500, detail="Este usuario no existe")
         return data
-    
+
 async def get_songs(playlist):
     async with httpx.AsyncClient() as client:
         songs = []
         songs_id = playlist.get('songs_ids')
 
         for song_id in songs_id:
-            response = await client.get(f"http://artist-api:8080/artistapi/song/by-id?id={str(song_id)}")
-            data_songs = response.json()
-            songs.append(data_songs)
+            try:
+                response = await client.get(f"http://artist-api:8080/song/by-id?id={str(song_id)}")
+                response.raise_for_status()
+                data_songs = response.json()
+                songs.append(data_songs)
+            except httpx.HTTPError as e:
+                raise HTTPException(status_code=500, detail=f"Error al obtener canción {song_id}: {str(e)}")
             
         playlist.pop('songs_ids')
         playlist["songs"] = songs
     
-    return songs
+    return songs    
 
 async def get_artist(songs):
     async with httpx.AsyncClient() as client:
         for artist in songs:
-            response = await client.get(f"http://artist-api:8080/artistapi/artist/by-id?id={artist.get('artistID')}")
+            response = await client.get(f"http://artist-api:8080/artist/by-id?id={artist.get('artistID')}")
             data_artists = response.json()
             artist["artist"] = data_artists
             artist.pop('artistID')
@@ -48,7 +52,7 @@ async def get_artist(songs):
 async def get_song(song_id):
     async with httpx.AsyncClient() as client:
 
-        response = await client.get(f"http://artist-api:8080/artistapi/song/by-id?id={str(song_id)}")
+        response = await client.get(f"http://artist-api:8080/song/by-id?id={str(song_id)}")
 
         data = response.json()
 

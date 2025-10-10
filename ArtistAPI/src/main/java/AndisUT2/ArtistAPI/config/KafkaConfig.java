@@ -16,7 +16,7 @@ import java.util.Map;
 @Configuration
 public class KafkaConfig {
 
-    @Value("${spring.kafka.producer.bootstrap-servers}")
+    @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
     @Value("${spring.kafka.producer.key-serializer}")
@@ -31,7 +31,7 @@ public class KafkaConfig {
     @Value("${spring.kafka.producer.properties.retry.backoff.ms}")
     private int retryBackoffMs;
 
-    @Value("${spring.kafka.producer.properties.linger}")
+    @Value("${spring.kafka.producer.properties.linger.ms}")
     private int linger;
 
     @Value("${spring.kafka.producer.properties.request.timeout.ms}")
