@@ -57,7 +57,7 @@ public class SongController {
         return ResponseEntity.ok(song);
     }
 
-    @PostMapping("/update-title")
+    @PatchMapping("/update-title")
     public ResponseEntity<Song> updateSongTitle(@RequestParam String name, @RequestParam int songId) {
         Song song = songService.updateSong(name, songId);
         return ResponseEntity.ok(song);

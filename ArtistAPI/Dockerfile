@@ -1,5 +1,5 @@
 #Compilación del código
-FROM maven:3.8.5-openjdk-17 AS builder
+FROM maven:3.9.9-eclipse-temurin-21 AS builder
 
 # Establecer el directorio de trabajo
 WORKDIR /app
@@ -12,7 +12,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 #Creación de la imagen final
-FROM eclipse-temurin:17-jre-focal
+FROM eclipse-temurin:21-jre
 
 # Establece el directorio de trabajo
 WORKDIR /app

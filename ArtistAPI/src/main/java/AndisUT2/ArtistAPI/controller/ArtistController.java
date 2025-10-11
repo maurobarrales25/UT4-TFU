@@ -41,7 +41,7 @@ public class ArtistController {
         return ResponseEntity.ok(artist);
     }
 
-    @PostMapping("/update-by-id")
+    @PatchMapping("/update-by-id")
     public ResponseEntity<Artist> updateArtist(@RequestParam int id, @RequestParam String newName) {
         Artist artist = artistService.updateArtist(id,newName);
         return ResponseEntity.ok(artist);
