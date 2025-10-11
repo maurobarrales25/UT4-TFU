@@ -66,7 +66,7 @@ public class KafkaConfig {
     public NewTopic albumUpdateTopic() {
         return TopicBuilder.name("album-update")
                 .partitions(3)
-                .replicas(3)
+                .replicas(1)
                 .configs(Map.of("min.insync.replicas", "2"))
                 .build();
     }
@@ -75,7 +75,7 @@ public class KafkaConfig {
     public NewTopic artistUpdateTopic() {
         return TopicBuilder.name("artist-update")
                 .partitions(3)
-                .replicas(3)
+                .replicas(1)
                 .configs(Map.of("min.insync.replicas", "2"))
                 .build();
     }
