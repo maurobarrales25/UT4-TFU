@@ -19,3 +19,7 @@ def get_user_by_id(id: int):
 @router.post("/users", response_model=UserSchema)
 def create_user(user: UserCreate):
     return user_service.create_user(user)
+
+@router.put("/users/{id}", response_model=UserSchema)
+def update_user(id: int, user_update: UserCreate):
+    return user_service.update_user(id, user_update)

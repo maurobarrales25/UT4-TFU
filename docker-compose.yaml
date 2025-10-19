@@ -41,6 +41,7 @@ services:
       - ./UserAPI/.env
     depends_on:
       - user-db
+      - kafka-broker
 
   user-db:
     image: postgres:17
