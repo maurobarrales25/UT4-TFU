@@ -29,7 +29,7 @@ def consume_artists():
         try:
             print(f"[ATTEMPT] Intento {attempt + 1} de conectar a Kafka...")
             consumer = DeserializingConsumer(consumer_conf)
-            consumer.subscribe(['artist-update'])
+            consumer.subscribe(['artist-update','album-update'])
             print("[****] Conectado a Kafka exitosamente!")
             break
         except Exception as e:
@@ -54,10 +54,14 @@ def consume_artists():
 
             data = msg.value() 
             kafka_key = msg.key()
-            print(f"[KEY] {kafka_key}, [MESSAGE] artistID={data.get('artistID')}, name={data.get('name')}")
-
-
-            
+            topic = msg.topic()
+            if topic == 'artist-update':
+                print(f"[KEY] {kafka_key}, [MESSAGE] artistID={data.get('artistID')}, name={data.get('name')}")
+            elif topic == 'album-update':
+                print(f"[KEY] {kafka_key}, [MESSAGE] albumId={data.get('albumId')}, albumName={data.get('albumName')}, artistId={data.get('artistId')}, artistName={data.get('artistName')}")
+            else:                
+                print(f"[WARNING] Mensaje recibido de tópico desconocido: {topic}")
+    
 
     except KeyboardInterrupt:
         print("[STOP] Deteniendo consumer...")
