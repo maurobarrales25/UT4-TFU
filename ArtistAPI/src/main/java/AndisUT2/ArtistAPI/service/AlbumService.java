@@ -1,10 +1,10 @@
 package AndisUT2.ArtistAPI.service;
 
-import AndisUT2.ArtistAPI.events.DTOevents.AlbumUpdateEvent;
-import AndisUT2.ArtistAPI.events.Producer.AlbumProducer;
+import AndisUT2.ArtistAPI.events.DTOevents.kafkaEvents.AlbumUpdateEvent;
+import AndisUT2.ArtistAPI.events.producer.AlbumProducer;
 import AndisUT2.ArtistAPI.model.Album;
 import AndisUT2.ArtistAPI.model.Artist;
-import AndisUT2.ArtistAPI.repository.AlbumRepository;
+import AndisUT2.ArtistAPI.repository.write.AlbumRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -62,7 +62,7 @@ public class AlbumService {
            artist = artistService.saveArtist(artistName);
        }
 
-       Album album = new Album(name, artist.getArtistID());
+       Album album = new Album(name, artist.getArtistId());
        return albumRepository.saveAlbum(album);
     }
 
@@ -78,7 +78,7 @@ public class AlbumService {
 
         Artist artist = artistService.getArtistById(album.getArtistId());
         AlbumUpdateEvent event= new AlbumUpdateEvent(album.getAlbumId(),album.getAlbumName(),
-                artist.getArtistID(), artist.getName());
+                artist.getArtistId(), artist.getName());
 
         String kafkaKey = String.format("album-%d", album.getAlbumId());
         albumProducer.send("album-update", kafkaKey, event);

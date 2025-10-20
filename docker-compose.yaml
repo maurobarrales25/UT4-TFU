@@ -31,6 +31,24 @@ services:
     ports:
       - "${MYSQL_PORT}:3306"
 
+  # ---------------- MONGO ARTIST READ ----------------
+  mongo-artist-read:
+    image: mongo:latest
+    container_name: mongo-artist-read
+    env_file:
+      - ./ArtistAPI/.env
+    restart: always
+    ports:
+      - "${MONGO_ARTIST_READ_PORT}:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ARTIST_READ_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ARTIST_READ_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_ARTIST_READ_DB}
+    volumes:
+      - mongo_artist_read_data:/data/db
+
+
+
   # ---------------- API DE USUARIOS ----------------
   user-api:
     build: ./UserAPI
@@ -120,4 +138,5 @@ volumes:
   user-db-data:
   mongo_data:
   kafka_data:
+  mongo_artist_read_data:
 

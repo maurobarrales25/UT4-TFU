@@ -1,4 +1,4 @@
-package AndisUT2.ArtistAPI.repository;
+package AndisUT2.ArtistAPI.repository.write;
 
 import AndisUT2.ArtistAPI.model.Artist;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,7 +18,7 @@ public class ArtistRepository {
 
     private static final RowMapper<Artist> artistRowMapper = (rs, rowNum) -> {
         Artist artist = new Artist();
-        artist.setArtistID(rs.getInt("artist_id"));
+        artist.setArtistId(rs.getInt("artist_id"));
         artist.setName(rs.getString("name"));
         return artist;
     };
@@ -52,7 +52,7 @@ public class ArtistRepository {
 
         Number key = keyHolder.getKey();
         if (key != null) {
-            artist.setArtistID(key.intValue());
+            artist.setArtistId(key.intValue());
         } else {
             throw new RuntimeException("No se pudo obtener el ID generado del artista");
         }
@@ -62,12 +62,12 @@ public class ArtistRepository {
 
     public Artist updateArtist(Artist artist) {
         String sql = "UPDATE artist SET name = ? WHERE artist_id = ?";
-        int rows = jdbcTemplate.update(sql, artist.getName(), artist.getArtistID());
+        int rows = jdbcTemplate.update(sql, artist.getName(), artist.getArtistId());
 
         if (rows > 0) {
-            return getArtistById(artist.getArtistID());
+            return getArtistById(artist.getArtistId());
         } else {
-            throw new RuntimeException("No se pudo actualizar el artista con ID " + artist.getArtistID());
+            throw new RuntimeException("No se pudo actualizar el artista con ID " + artist.getArtistId());
         }
     }
 
