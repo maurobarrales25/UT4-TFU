@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from typing import List
 from service.playlist_service import PlaylistService
 from repository.playlist_repository import PlaylistRepository
@@ -8,6 +8,14 @@ router = APIRouter(prefix="/playlist", tags=["playlist"])
 
 playlist_repository = PlaylistRepository()
 playlist_service = PlaylistService(playlist_repository)
+
+@router.get("/health")
+async def health_check():
+    try:
+        await playlist_service.get_playlists()
+        return {"status": "UP"}
+    except Exception as e:
+        raise HTTPException(status_code=503, detail={"status": "DOWN", "error": str(e)})
 
 @router.get("/")
 async def get_playlists():
