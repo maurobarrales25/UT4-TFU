@@ -71,5 +71,36 @@ def consume_artists():
         print("[CLOSE] Consumer cerrado correctamente.")
 
 
+def consume_users():
+    print("[START] Iniciando consumidor de usuarios...")
+    consumer_conf = {
+        'bootstrap.servers': 'kafka-broker:9092',
+        'group.id': 'playlist-user-consumer-group',
+        'auto.offset.reset': 'earliest',
+        'key.deserializer': StringDeserializer('utf_8'),
+        'value.deserializer': JSONDeserializerClass()
+    }
+
+    consumer = DeserializingConsumer(consumer_conf)
+    consumer.subscribe(['user-updates'])
+    print("[READY] Consumer de usuarios iniciado...")
+
+    try:
+        while True:
+            msg = consumer.poll(1.0)
+            if msg is None:
+                continue
+            if msg.error():
+                print(f"[ERROR] {msg.error()}")
+                continue
+
+    except KeyboardInterrupt:
+        print("[STOP] Deteniendo consumer de usuarios...")
+
+    finally:
+        consumer.close()
+        print("[CLOSE] Consumer de usuarios cerrado correctamente.")
+
 if __name__ == "__main__":
     consume_artists()
+    consume_users()
