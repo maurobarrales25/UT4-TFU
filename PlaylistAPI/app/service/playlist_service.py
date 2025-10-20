@@ -1,5 +1,5 @@
 from repository.playlist_repository import PlaylistRepository
-from utils.utils import get_user, get_songs, get_artist, get_song
+from utils.utils import safe_get_user, safe_get_songs, safe_get_artist, safe_get_song
 from fastapi import HTTPException
 
 class PlaylistService:
@@ -17,7 +17,7 @@ class PlaylistService:
         return playlist
     
     async def get_playlists_by_user_id(self, user_id):
-        user = await get_user(user_id)
+        user = await safe_get_user(user_id)
         
         playlists = await self.playlist_repository.get_playlists_by_user_id(user_id)
         
@@ -29,19 +29,19 @@ class PlaylistService:
     async def save_playlist(self, playlist):
         playlist_dict = playlist.dict()
         user_id = playlist_dict.get("user_id")
-        user = await get_user(user_id)
+        user = await safe_get_user(user_id)
 
         songs_ids = playlist_dict.get("songs_ids")
 
         for song_id in songs_ids:
             try:
-                await get_song(song_id)
+                await safe_get_song(song_id)
             except:
                 raise HTTPException(status_code=500, detail="Hay canciones que no existen")
         
         playlist_dict.pop('user_id')
         playlist_dict["user"] = user
-        songs = await get_songs(playlist_dict)
-        await get_artist(songs)
+        songs = await safe_get_songs(playlist_dict)
+        await safe_get_artist(songs)
             
         return await self.playlist_repository.save_playlist(playlist_dict)

@@ -19,5 +19,4 @@ typing_extensions==4.15.0
 uvicorn==0.35.0
 kafka-python-ng==2.2.2
 confluent-kafka>=2.1.0
-
-
+tenacity==9.1.2
