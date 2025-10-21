@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   # ---------------- API GATEWAY ----------------
   api-gateway:
@@ -83,6 +81,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
     volumes:
       - mongo_data:/data/db
+      - ./PlaylistAPI/mongo-init:/docker-entrypoint-initdb.d
 
   playlist-consumer:
     build:
@@ -97,8 +96,7 @@ services:
     volumes:
       - ./PlaylistAPI/app:/app
 
-
-# ---------------- KAFKA BROKERS ----------------
+  # ---------------- KAFKA BROKERS ----------------
   kafka-broker:
     image: apache/kafka:latest
     container_name: broker1
@@ -122,13 +120,21 @@ services:
     volumes:
       - kafka_data:/var/lib/kafka/data
     healthcheck:
-      test: ["CMD-SHELL", "kafka-broker-api-versions.sh --bootstrap-server localhost:9092 || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "kafka-broker-api-versions.sh --bootstrap-server localhost:9092 || exit 1",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
 
-
+  # ---------------- Sidecar Valet-Key ----------------
+  valet-key-sidecar:
+    build: ./sidecar-valet-key
+    ports:
+      - "8089:8089"
 
 # ---------------- VOLUMES ----------------
 volumes:
@@ -136,4 +142,3 @@ volumes:
   user-db-data:
   mongo_data:
   kafka_data:
-
