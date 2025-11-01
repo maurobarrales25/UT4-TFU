@@ -48,8 +48,8 @@ class PlaylistService:
     
     # Sincronizacion de datos
 
-    async def update_user_from_playlists(self, user_id):
-        return await self.playlist_repository.update_user_from_playlists(user_id)
+    async def update_user_from_playlists(self, user):
+        return await self.playlist_repository.update_user_from_playlists(user)
     
     async def update_artist_from_playlists(self, artist_id):
         return await self.playlist_repository.update_artist_from_playlists(artist_id)

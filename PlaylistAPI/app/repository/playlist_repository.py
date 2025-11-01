@@ -36,11 +36,11 @@ class PlaylistRepository:
     
     # Sincronizacion de datos
     
-    async def update_user_from_playlists(self, user_id, new_user):
+    async def update_user_from_playlists(self, user):
         result = await db.get_collection("playlist").update_many(
-            {"user.id": user_id},
+            {"user.id": user.get("id")},
             {
-                "$set": {"user": new_user}
+                "$set": {"user": user}
             }
         )
 

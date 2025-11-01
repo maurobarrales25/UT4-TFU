@@ -1,7 +1,9 @@
 from confluent_kafka import DeserializingConsumer
 from confluent_kafka.serialization import StringDeserializer, Deserializer
 from confluent_kafka.admin import AdminClient
-from service import playlist_service
+from controller.playlist_controller import playlist_service
+import asyncio
+
 import json
 import time
 import threading
@@ -29,11 +31,11 @@ def wait_for_topics(bootstrap_servers, topics, timeout=30):
         time.sleep(2)
     raise Exception(f"Topics no disponibles después de {timeout} segundos: {topics}")
 
-def consume_artists():
+async def consume_artists():
     print("[START] Iniciando consumidor de Kafka...")
     max_retries = 10
     retry_delay = 5
-    topics = ['artist-update', 'album-update']
+    topics = ['artist-update', 'album-update', 'user-update']
 
     consumer_conf = {
         'bootstrap.servers': 'kafka-broker:9092',
@@ -78,6 +80,9 @@ def consume_artists():
                 print(f"[KEY] {kafka_key}, [MESSAGE] artistID={data.get('artistID')}, name={data.get('name')}")
             elif topic == 'album-update':
                 print(f"[KEY] {kafka_key}, [MESSAGE] albumId={data.get('albumId')}, albumName={data.get('albumName')}, artistId={data.get('artistId')}, artistName={data.get('artistName')}")
+            elif topic == 'user-update':
+                print(f"[KEY] {kafka_key}, [MESSAGE] data={data}")
+                await playlist_service.update_user_from_playlists(data.get('user'))
             else:                
                 print(f"[WARNING] Mensaje recibido de tópico desconocido: {topic}")
     
@@ -90,36 +95,5 @@ def consume_artists():
         print("[CLOSE] Consumer cerrado correctamente.")
 
 
-def consume_users():
-    print("[START] Iniciando consumidor de usuarios...")
-    consumer_conf = {
-        'bootstrap.servers': 'kafka-broker:9092',
-        'group.id': 'playlist-user-consumer-group',
-        'auto.offset.reset': 'earliest',
-        'key.deserializer': StringDeserializer('utf_8'),
-        'value.deserializer': JSONDeserializerClass()
-    }
-
-    consumer = DeserializingConsumer(consumer_conf)
-    consumer.subscribe(['user-update'])
-    print("[READY] Consumer de usuarios iniciado...")
-
-    try:
-        while True:
-            msg = consumer.poll(1.0)
-            if msg is None:
-                continue
-            if msg.error():
-                print(f"[ERROR] {msg.error()}")
-                continue
-
-    except KeyboardInterrupt:
-        print("[STOP] Deteniendo consumer de usuarios...")
-
-    finally:
-        consumer.close()
-        print("[CLOSE] Consumer de usuarios cerrado correctamente.")
-
 if __name__ == "__main__":
-    consume_artists()
-    consume_users()
+    asyncio.run(consume_artists())
