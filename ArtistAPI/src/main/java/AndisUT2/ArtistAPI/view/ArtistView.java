@@ -8,11 +8,11 @@ public class ArtistView {
 
     @Id
     private Integer artistId;
-    private String name;
+    private String artistName;
 
-    public ArtistView(Integer artistId, String name) {
+    public ArtistView(Integer artistId, String artistName) {
         this.artistId = artistId;
-        this.name = name;
+        this.artistName = artistName;
     }
 
     public Integer getArtistId() {
@@ -24,10 +24,10 @@ public class ArtistView {
     }
 
     public String getName() {
-        return name;
+        return artistName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String artistName) {
+        this.artistName = artistName;
     }
 }

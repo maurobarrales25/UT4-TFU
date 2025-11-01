@@ -5,10 +5,10 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface SongReadRepository extends MongoRepository<SongView, Integer> {
 
-    SongView findByName(String name);
+    SongView findBySongName(String songName);
 
     SongView findByArtistId(Integer artistId);
 
-    SongView findByArtistName(String artist);
+    SongView findByArtistName(String artistName);
 
 }
