@@ -79,6 +79,7 @@ services:
       - "${PLAYLIST_API_PORT}:8080"
     depends_on:
       - mongo
+      - kafka-broker
     env_file:
       - ./.env
     volumes:
