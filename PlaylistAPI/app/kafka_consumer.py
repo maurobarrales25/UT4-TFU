@@ -3,6 +3,7 @@ from confluent_kafka.serialization import StringDeserializer, Deserializer
 from service import playlist_service
 import json
 import time
+import threading
 
 class JSONDeserializerClass(Deserializer):
     def __init__(self):
@@ -84,7 +85,7 @@ def consume_users():
     }
 
     consumer = DeserializingConsumer(consumer_conf)
-    consumer.subscribe(['user-updates'])
+    consumer.subscribe(['user-update'])
     print("[READY] Consumer de usuarios iniciado...")
 
     try:
