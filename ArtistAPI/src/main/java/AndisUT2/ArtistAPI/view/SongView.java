@@ -4,7 +4,7 @@ package AndisUT2.ArtistAPI.view;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "Song")
+@Document(collection = "songs")
 public class SongView {
     @Id
     private int songId;
