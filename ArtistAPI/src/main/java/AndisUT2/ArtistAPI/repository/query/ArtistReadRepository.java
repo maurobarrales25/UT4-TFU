@@ -6,5 +6,4 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface ArtistReadRepository extends MongoRepository<ArtistView, Integer> {
 
     ArtistView findByArtistName(String artistName);
-
 }

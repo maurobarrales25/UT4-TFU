@@ -43,6 +43,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${ARTIST_MONGO_PASSWORD}
     volumes:
       - artist-mongo-data:/data/db
+      - ./ArtistAPI/src/main/resources:/docker-entrypoint-initdb.d
 
   # ---------------- API DE USUARIOS ----------------
   user-api:

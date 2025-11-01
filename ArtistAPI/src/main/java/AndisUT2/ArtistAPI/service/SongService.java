@@ -21,8 +21,7 @@ public class SongService {
     private AlbumService albumService;
     private final DomainEventPublisher domainPublisher;
 
-    public SongService(SongRepository songRepository, ArtistService artistService,
-                       AlbumService albumService, DomainEventPublisher domainPublisher) {
+    public SongService(SongRepository songRepository, ArtistService artistService, AlbumService albumService, DomainEventPublisher domainPublisher) {
         this.songRepository = songRepository;
         this.artistService = artistService;
         this.albumService = albumService;

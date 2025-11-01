@@ -3,7 +3,7 @@ package AndisUT2.ArtistAPI.view;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collation = "Artist")
+@Document(collection = "artists")
 public class ArtistView {
 
     @Id
