@@ -16,7 +16,7 @@ def serialize_object_id(doc):
 def serialize_object_ids(docs: List):
     return [serialize_object_id(doc) for doc in docs]
 
-@retry(stop=stop_after_attempt(3), wait=wait_fixed(2), before_sleep=before_sleep_log(logger, logging.WARNING))
+@retry(stop=stop_after_attempt(4), wait=wait_fixed(2), before_sleep=before_sleep_log(logger, logging.WARNING))
 async def get_user(user_id):
     async with httpx.AsyncClient() as client:
         response = await client.get(f"http://user-api:8000/usersapi/api/users/{str(user_id)}")
@@ -27,7 +27,7 @@ async def get_user(user_id):
             raise HTTPException(status_code=500, detail="Este usuario no existe")
         return data
         
-@retry(stop=stop_after_attempt(3), wait=wait_fixed(2), before_sleep=before_sleep_log(logger, logging.WARNING))
+@retry(stop=stop_after_attempt(4), wait=wait_fixed(2), before_sleep=before_sleep_log(logger, logging.WARNING))
 async def get_songs(playlist):
     async with httpx.AsyncClient() as client:
         songs = []
@@ -47,7 +47,7 @@ async def get_songs(playlist):
     
     return songs    
 
-@retry(stop=stop_after_attempt(3), wait=wait_fixed(2), before_sleep=before_sleep_log(logger, logging.WARNING))
+@retry(stop=stop_after_attempt(4), wait=wait_fixed(2), before_sleep=before_sleep_log(logger, logging.WARNING))
 async def get_artist(songs):
     async with httpx.AsyncClient() as client:
         for artist in songs:
@@ -57,7 +57,7 @@ async def get_artist(songs):
             artist.pop('artistID')
             artist.pop('albumID')
 
-@retry(stop=stop_after_attempt(3), wait=wait_fixed(2), before_sleep=before_sleep_log(logger, logging.WARNING))
+@retry(stop=stop_after_attempt(4), wait=wait_fixed(2), before_sleep=before_sleep_log(logger, logging.WARNING))
 async def get_song(song_id):
     async with httpx.AsyncClient() as client:
 
