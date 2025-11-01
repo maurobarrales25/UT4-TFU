@@ -1,5 +1,6 @@
 from confluent_kafka import DeserializingConsumer
 from confluent_kafka.serialization import StringDeserializer, Deserializer
+from confluent_kafka.admin import AdminClient
 from service import playlist_service
 import json
 import time
@@ -13,10 +14,25 @@ class JSONDeserializerClass(Deserializer):
             return None
         return json.loads(data.decode('utf-8'))
 
+def wait_for_topics(bootstrap_servers, topics, timeout=30):
+    """Espera a que todos los topics existan antes de consumir."""
+    admin = AdminClient({'bootstrap.servers': bootstrap_servers})
+    start_time = time.time()
+    while time.time() - start_time < timeout:
+        metadata = admin.list_topics(timeout=5)
+        existing_topics = metadata.topics.keys()
+        if all(topic in existing_topics for topic in topics):
+            print(f"[READY] Todos los topics disponibles: {topics}")
+            return
+        print("[WAIT] Esperando a que los topics estén disponibles...")
+        time.sleep(2)
+    raise Exception(f"Topics no disponibles después de {timeout} segundos: {topics}")
+
 def consume_artists():
     print("[START] Iniciando consumidor de Kafka...")
     max_retries = 10
     retry_delay = 5
+    topics = ['artist-update', 'album-update']
 
     consumer_conf = {
         'bootstrap.servers': 'kafka-broker:9092',
@@ -30,7 +46,8 @@ def consume_artists():
         try:
             print(f"[ATTEMPT] Intento {attempt + 1} de conectar a Kafka...")
             consumer = DeserializingConsumer(consumer_conf)
-            consumer.subscribe(['artist-update','album-update'])
+            wait_for_topics(consumer_conf['bootstrap.servers'], topics)
+            consumer.subscribe(topics)
             print("[****] Conectado a Kafka exitosamente!")
             break
         except Exception as e:

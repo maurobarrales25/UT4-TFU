@@ -21,6 +21,7 @@ services:
     depends_on:
       - artist-db
       - artist-mongo
+      - kafka-broker
 
   artist-db:
     image: mysql:8.0
@@ -81,6 +82,7 @@ services:
     depends_on:
       - mongo
       - kafka-broker
+      - artist-api
     env_file:
       - ./.env
     volumes:

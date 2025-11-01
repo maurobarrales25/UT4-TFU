@@ -61,6 +61,8 @@ class PlaylistRepository:
             {"songs.songID": song_id}
         )
 
+        print(result)
+
     async def update_album_from_playlists(self, album_id):
         result = await db.get_collection("playlist").update_many(
 
