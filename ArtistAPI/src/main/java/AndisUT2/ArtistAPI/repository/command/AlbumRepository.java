@@ -1,4 +1,4 @@
-package AndisUT2.ArtistAPI.repository;
+package AndisUT2.ArtistAPI.repository.command;
 
 import AndisUT2.ArtistAPI.model.Album;
 import org.springframework.dao.EmptyResultDataAccessException;

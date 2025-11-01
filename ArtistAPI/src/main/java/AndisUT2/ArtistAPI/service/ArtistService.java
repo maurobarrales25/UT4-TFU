@@ -1,10 +1,13 @@
 package AndisUT2.ArtistAPI.service;
 
-import AndisUT2.ArtistAPI.events.DTOevents.ArtistUpdateEvent;
-import AndisUT2.ArtistAPI.events.Producer.ArtistProducer;
-import AndisUT2.ArtistAPI.events.Producer.IEventProducer;
+import AndisUT2.ArtistAPI.events.DTOevents.domainEvents.DomainArtistCreateEvent;
+import AndisUT2.ArtistAPI.events.DTOevents.domainEvents.DomainArtistUpdateEvent;
+import AndisUT2.ArtistAPI.events.DTOevents.kafkaEvents.ArtistUpdateEvent;
+import AndisUT2.ArtistAPI.events.domainlEventPublisher.DomainEventPublisher;
+import AndisUT2.ArtistAPI.events.producer.ArtistProducer;
+import AndisUT2.ArtistAPI.mapper.ArtistUpdateMapper;
 import AndisUT2.ArtistAPI.model.Artist;
-import AndisUT2.ArtistAPI.repository.ArtistRepository;
+import AndisUT2.ArtistAPI.repository.command.ArtistRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,10 +19,14 @@ public class ArtistService {
 
     private final ArtistRepository artistRepository;
     private final ArtistProducer artistProducer;
+    private final DomainEventPublisher domainPublisher;
 
-    public ArtistService(ArtistRepository artistRepository, ArtistProducer artistProducer) {
+    private static final ArtistUpdateMapper artistUpdateMapper = ArtistUpdateMapper.INSTANCE;
+
+    public ArtistService(ArtistRepository artistRepository, ArtistProducer artistProducer, DomainEventPublisher domainPublisher) {
         this.artistRepository = artistRepository;
         this.artistProducer =  artistProducer;
+        this.domainPublisher = domainPublisher;
     }
 
     public Artist getArtistByName(String name){
@@ -48,20 +55,38 @@ public class ArtistService {
         return artist;
     }
 
+    public void publishArtistCreateEvent(Artist artist){
+        DomainArtistCreateEvent artistCreate = new DomainArtistCreateEvent(artist.getArtistId(),artist.getName());
+        domainPublisher.publishEvent(artistCreate);
+    }
+
     public Artist saveArtist(String name){
         Artist artist = new Artist(name);
-        return artistRepository.saveArtist(artist);
+        artistRepository.saveArtist(artist);
 
+        publishArtistCreateEvent(artist);
+
+        return artist;
     }
+
+    private void publishArtistUpdateEvents(Artist artist) {
+        DomainArtistUpdateEvent domainEvent = new DomainArtistUpdateEvent(artist.getArtistId(), artist.getName());
+        domainPublisher.publishEvent(domainEvent);
+
+        ArtistUpdateEvent kafkaEvent = ArtistUpdateMapper.INSTANCE.toKafkaEvent(domainEvent);
+        String kafkaKey = "artist-" + artist.getArtistId();
+        artistProducer.send("artist-update", kafkaKey, kafkaEvent);
+    }
+
 
     public Artist updateArtist(int artistId, String newName){
         Artist artist = getArtistById(artistId);
         artist.setName(newName);
         artistRepository.updateArtist(artist);
 
-        ArtistUpdateEvent event = new ArtistUpdateEvent(artist.getArtistID(), artist.getName());
-        String kafkaKey = String.format("artist-%d", artist.getArtistID());
-        artistProducer.send("artist-update", kafkaKey, event);
+        publishArtistUpdateEvents(artist);
         return artist;
     }
+
+
 }

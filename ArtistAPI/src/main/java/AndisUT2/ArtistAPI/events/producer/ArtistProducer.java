@@ -1,6 +1,6 @@
-package AndisUT2.ArtistAPI.events.Producer;
+package AndisUT2.ArtistAPI.events.producer;
 
-import AndisUT2.ArtistAPI.events.DTOevents.ArtistUpdateEvent;
+import AndisUT2.ArtistAPI.events.DTOevents.kafkaEvents.ArtistUpdateEvent;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
