@@ -51,8 +51,8 @@ class PlaylistService:
     async def update_user_from_playlists(self, user):
         return await self.playlist_repository.update_user_from_playlists(user)
     
-    async def update_artist_from_playlists(self, artist_id):
-        return await self.playlist_repository.update_artist_from_playlists(artist_id)
+    async def update_artist_from_playlists(self, artist):
+        return await self.playlist_repository.update_artist_from_playlists(artist)
     
     async def update_song_from_playlists(self, song_id):
         return await self.playlist_repository.update_song_from_playlists(song_id)

@@ -77,9 +77,15 @@ async def consume_artists():
             kafka_key = msg.key()
             topic = msg.topic()
             if topic == 'artist-update':
-                print(f"[KEY] {kafka_key}, [MESSAGE] artistID={data.get('artistID')}, name={data.get('name')}")
+                artist = {
+                    "artistId" : data.get('artistId'),
+                    "name" : data.get('name')
+                }
+                print(f"[KEY] {kafka_key}, [MESSAGE] artistId={artist.get('artistId')}, name={artist.get('name')}")
+                await playlist_service.update_artist_from_playlists(artist)
             elif topic == 'album-update':
                 print(f"[KEY] {kafka_key}, [MESSAGE] albumId={data.get('albumId')}, albumName={data.get('albumName')}, artistId={data.get('artistId')}, artistName={data.get('artistName')}")
+                await playlist_service.update_album_from_playlists
             elif topic == 'user-update':
                 print(f"[KEY] {kafka_key}, [MESSAGE] data={data}")
                 await playlist_service.update_user_from_playlists(data.get('user'))

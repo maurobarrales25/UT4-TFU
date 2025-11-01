@@ -13,8 +13,10 @@ def serialize_object_ids(docs: List):
 
 async def get_user(user_id):
     async with httpx.AsyncClient() as client:
-        response = await client.get(f"http://user-api:8000/usersapi/api/users/{str(user_id)}")
-
+        token_data = await client.get(f"http://valet-key-sidecar:8089/?scope=read")
+        token = token_data.json().get('token')
+        response = await client.get(f"http://user-api:8000/usersapi/api/users/{str(user_id)}", headers = {"Authorization" : f"Bearer {token}"})
+        
         data = response.json()
 
         if data.get("detail"):
