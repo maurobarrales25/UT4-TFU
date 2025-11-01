@@ -1,13 +1,13 @@
 package AndisUT2.ArtistAPI.service;
 
-import AndisUT2.ArtistAPI.events.DTOevents.domainEvents.DomainArtistCreate;
+import AndisUT2.ArtistAPI.events.DTOevents.domainEvents.DomainArtistCreateEvent;
 import AndisUT2.ArtistAPI.events.DTOevents.domainEvents.DomainArtistUpdateEvent;
 import AndisUT2.ArtistAPI.events.DTOevents.kafkaEvents.ArtistUpdateEvent;
 import AndisUT2.ArtistAPI.events.domainlEventPublisher.DomainEventPublisher;
 import AndisUT2.ArtistAPI.events.producer.ArtistProducer;
 import AndisUT2.ArtistAPI.mapper.ArtistUpdateMapper;
 import AndisUT2.ArtistAPI.model.Artist;
-import AndisUT2.ArtistAPI.repository.write.ArtistRepository;
+import AndisUT2.ArtistAPI.repository.command.ArtistRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -56,7 +56,7 @@ public class ArtistService {
     }
 
     public void publishArtistCreateEvent(Artist artist){
-        DomainArtistCreate artistCreate = new DomainArtistCreate(artist.getArtistId(),artist.getName());
+        DomainArtistCreateEvent artistCreate = new DomainArtistCreateEvent(artist.getArtistId(),artist.getName());
         domainPublisher.publishEvent(artistCreate);
     }
 

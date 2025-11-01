@@ -1,4 +1,4 @@
-package AndisUT2.ArtistAPI.repository.write;
+package AndisUT2.ArtistAPI.repository.command;
 
 import AndisUT2.ArtistAPI.model.Artist;
 import org.springframework.jdbc.core.JdbcTemplate;

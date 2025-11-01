@@ -1,10 +1,13 @@
 package AndisUT2.ArtistAPI.service;
 
+import AndisUT2.ArtistAPI.events.DTOevents.domainEvents.DomainAlbumCreateEvent;
+import AndisUT2.ArtistAPI.events.DTOevents.domainEvents.DomainAlbumUpdateEvent;
 import AndisUT2.ArtistAPI.events.DTOevents.kafkaEvents.AlbumUpdateEvent;
+import AndisUT2.ArtistAPI.events.domainlEventPublisher.DomainEventPublisher;
 import AndisUT2.ArtistAPI.events.producer.AlbumProducer;
 import AndisUT2.ArtistAPI.model.Album;
 import AndisUT2.ArtistAPI.model.Artist;
-import AndisUT2.ArtistAPI.repository.write.AlbumRepository;
+import AndisUT2.ArtistAPI.repository.command.AlbumRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,12 +20,14 @@ public class AlbumService {
     private final AlbumRepository albumRepository;
     private final ArtistService artistService;
     private final AlbumProducer albumProducer;
+    private final DomainEventPublisher domainEventPublisher;
 
 
-    public AlbumService(AlbumRepository albumRepository, ArtistService artistService, AlbumProducer albumProducer) {
+    public AlbumService(AlbumRepository albumRepository, ArtistService artistService, AlbumProducer albumProducer, DomainEventPublisher domainEventPublisher) {
         this.albumRepository = albumRepository;
         this.artistService = artistService;
         this.albumProducer = albumProducer;
+        this.domainEventPublisher = domainEventPublisher;
     }
 
     public Album getAlbumByName(String name){
@@ -55,15 +60,35 @@ public class AlbumService {
         return albumRepository.getAlbumsByArtistId(artistId);
     }
 
+    private void publishAlbumCreateEvent(Album album){
+        DomainAlbumCreateEvent albumCreate = new DomainAlbumCreateEvent();
+        Artist artist = artistService.getArtistById(album.getArtistId());
+
+        albumCreate.setAlbumId(album.getAlbumId());
+        albumCreate.setAlbumName(album.getAlbumName());
+        albumCreate.setArtistId(artist.getArtistId());
+        albumCreate.setArtistName(artist.getName());
+        domainEventPublisher.publishEvent(albumCreate);
+    }
+
     public Album saveAlbum(String name, String artistName){
        Artist artist = artistService.getArtistByName(artistName);
 
-       if(artist == null){
-           artist = artistService.saveArtist(artistName);
-       }
-
        Album album = new Album(name, artist.getArtistId());
-       return albumRepository.saveAlbum(album);
+       albumRepository.saveAlbum(album);
+       publishAlbumCreateEvent(album);
+       return album;
+    }
+
+    private void publishAlbumUpdateEvent(Album album){
+        DomainAlbumUpdateEvent update = new DomainAlbumUpdateEvent();
+        Artist artist = artistService.getArtistById(album.getArtistId());
+
+        update.setAlbumId(album.getAlbumId());
+        update.setAlbumName(album.getAlbumName());
+        update.setArtistId(artist.getArtistId());
+        update.setArtistName(artist.getName());
+        domainEventPublisher.publishEvent(update);
     }
 
     public Album updateAlbum(int albumId, String newName){
@@ -79,6 +104,8 @@ public class AlbumService {
         Artist artist = artistService.getArtistById(album.getArtistId());
         AlbumUpdateEvent event= new AlbumUpdateEvent(album.getAlbumId(),album.getAlbumName(),
                 artist.getArtistId(), artist.getName());
+
+        publishAlbumUpdateEvent(album);
 
         String kafkaKey = String.format("album-%d", album.getAlbumId());
         albumProducer.send("album-update", kafkaKey, event);

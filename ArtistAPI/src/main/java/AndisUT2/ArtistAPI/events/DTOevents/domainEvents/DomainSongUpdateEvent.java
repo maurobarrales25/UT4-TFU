@@ -1,6 +1,6 @@
 package AndisUT2.ArtistAPI.events.DTOevents.domainEvents;
 
-public class DomainSongCreate {
+public class DomainSongUpdateEvent {
 
     private int songId;
     private String songName;
@@ -9,7 +9,9 @@ public class DomainSongCreate {
     private int albumId;
     private String albumName;
 
-    public DomainSongCreate(int songId, String songName, int artistId, String artistName, int albumId, String albumName) {
+    public DomainSongUpdateEvent() {}
+
+    public DomainSongUpdateEvent(int songId, String songName, int artistId, String artistName, int albumId, String albumName) {
         this.songId = songId;
         this.songName = songName;
         this.artistId = artistId;

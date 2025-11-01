@@ -1,12 +1,12 @@
 package AndisUT2.ArtistAPI.events.DTOevents.domainEvents;
 
-public class DomainArtistCreate {
+public class DomainArtistCreateEvent {
     private Integer artistId;
     private String name;
 
-    public DomainArtistCreate() {}
+    public DomainArtistCreateEvent() {}
 
-    public DomainArtistCreate(Integer artistId, String name) {
+    public DomainArtistCreateEvent(Integer artistId, String name) {
         this.artistId = artistId;
         this.name = name;
     }

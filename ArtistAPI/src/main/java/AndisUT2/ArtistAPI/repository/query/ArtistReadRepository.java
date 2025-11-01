@@ -1,6 +1,5 @@
-package AndisUT2.ArtistAPI.repository.read;
+package AndisUT2.ArtistAPI.repository.query;
 
-import AndisUT2.ArtistAPI.model.Artist;
 import AndisUT2.ArtistAPI.view.ArtistView;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
