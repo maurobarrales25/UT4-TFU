@@ -56,6 +56,7 @@ def consume_artists():
             data = msg.value() 
             kafka_key = msg.key()
             topic = msg.topic()
+            print(msg)
             if topic == 'artist-update':
                 print(f"[KEY] {kafka_key}, [MESSAGE] artistID={data.get('artistID')}, name={data.get('name')}")
             elif topic == 'album-update':
