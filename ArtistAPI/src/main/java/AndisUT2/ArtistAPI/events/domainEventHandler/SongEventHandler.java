@@ -1,6 +1,5 @@
 package AndisUT2.ArtistAPI.events.domainEventHandler;
 
-
 import AndisUT2.ArtistAPI.events.DTOevents.domainEvents.DomainSongCreateEvent;
 import AndisUT2.ArtistAPI.events.DTOevents.domainEvents.DomainSongUpdateEvent;
 import AndisUT2.ArtistAPI.repository.query.SongReadRepository;
@@ -10,7 +9,9 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.stereotype.Component;
 
+@Component
 public class SongEventHandler {
 
     private final SongReadRepository songReadRepository;
