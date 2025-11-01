@@ -9,8 +9,7 @@ db.playlist.insertMany([
       "songName": "The Pretender",
       "artist": {
         "artistID": 2,
-        "name": "Foo Fighters",
-        "genre": "Rock"
+        "name": "Foo Fighters"
       }
     },
     {
@@ -18,8 +17,7 @@ db.playlist.insertMany([
       "songName": "Let It Die",
       "artist": {
         "artistID": 2,
-        "name": "Foo Fighters",
-        "genre": "Rock"
+        "name": "Foo Fighters"
       }
     },
     {
@@ -28,7 +26,6 @@ db.playlist.insertMany([
       "artist": {
         "artistID": 2,
         "name": "Foo Fighters",
-        "genre": "Rock"
       }
     }
   ]
@@ -42,8 +39,7 @@ db.playlist.insertMany([
       "songName": "Erase/Replace",
       "artist": {
         "artistID": 2,
-        "name": "Foo Fighters",
-        "genre": "Rock"
+        "name": "Foo Fighters"
       }
     },
     {
@@ -51,8 +47,7 @@ db.playlist.insertMany([
       "songName": "Come Alive",
       "artist": {
         "artistID": 2,
-        "name": "Foo Fighters",
-        "genre": "Rock"
+        "name": "Foo Fighters"
       }
     }
   ] }

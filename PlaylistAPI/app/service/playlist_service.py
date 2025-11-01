@@ -45,3 +45,17 @@ class PlaylistService:
         await get_artist(songs)
             
         return await self.playlist_repository.save_playlist(playlist_dict)
+    
+    # Sincronizacion de datos
+
+    async def update_user_from_playlists(self, user_id):
+        return await self.playlist_repository.update_user_from_playlists(user_id)
+    
+    async def update_artist_from_playlists(self, artist_id):
+        return await self.playlist_repository.update_artist_from_playlists(artist_id)
+    
+    async def update_song_from_playlists(self, song_id):
+        return await self.playlist_repository.update_song_from_playlists(song_id)
+    
+    async def update_album_from_playlists(self, album_id):
+        return await self.playlist_repository.update_album_from_playlists(album_id)

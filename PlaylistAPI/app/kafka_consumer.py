@@ -1,5 +1,6 @@
 from confluent_kafka import DeserializingConsumer
 from confluent_kafka.serialization import StringDeserializer, Deserializer
+from service import playlist_service
 import json
 import time
 
@@ -55,6 +56,7 @@ def consume_artists():
             data = msg.value() 
             kafka_key = msg.key()
             print(f"[KEY] {kafka_key}, [MESSAGE] artistID={data.get('artistID')}, name={data.get('name')}")
+            
 
 
             

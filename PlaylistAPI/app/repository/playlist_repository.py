@@ -33,3 +33,37 @@ class PlaylistRepository:
     async def save_playlist(self, playlist):
         result = await db.get_collection("playlist").insert_one(playlist)
         return await self.get_playlist_by_id(result.inserted_id)
+    
+    # Sincronizacion de datos
+    
+    async def update_user_from_playlists(self, user_id, new_user):
+        result = await db.get_collection("playlist").update_many(
+            {"user.id": user_id},
+            {
+                "$set": {"user": new_user}
+            }
+        )
+
+        print(result)
+    
+    async def update_artist_from_playlists(self, artist_id):
+        result = await db.get_collection("playlist").update_many(
+            {"songs.artist.artistID": artist_id},
+            {
+                "$set": {}
+            }
+        )
+
+        print(result)
+    
+    async def update_song_from_playlists(self, song_id):
+        result = await db.get_collection("playlist").update_many(
+            {"songs.songID": song_id}
+        )
+
+    async def update_album_from_playlists(self, album_id):
+        result = await db.get_collection("playlist").update_many(
+
+        )
+
+        print(result)
