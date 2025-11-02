@@ -9,6 +9,16 @@ router = APIRouter()
 user_repository = UserRepository()
 user_service = UserService(user_repository)
 
+from fastapi import HTTPException
+
+@router.get("/health")
+async def health_check():
+    try:
+        user_service.get_all_users()  
+        return {"status": "UP"}
+    except Exception as e:
+        raise HTTPException(status_code=503, detail={"status": "DOWN", "error": str(e)})
+
 @router.get("/users", dependencies=[Depends(sidecar_valet_key)], response_model=List[UserSchema])
 async def get_users():
     return user_service.get_all_users()

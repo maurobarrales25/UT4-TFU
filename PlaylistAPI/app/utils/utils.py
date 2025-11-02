@@ -1,6 +1,11 @@
 from typing import List
 from fastapi import HTTPException
 import httpx
+from tenacity import retry, stop_after_attempt, wait_fixed, RetryError, before_sleep_log
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def serialize_object_id(doc):
     if doc is None:
@@ -11,6 +16,7 @@ def serialize_object_id(doc):
 def serialize_object_ids(docs: List):
     return [serialize_object_id(doc) for doc in docs]
 
+@retry(stop=stop_after_attempt(4), wait=wait_fixed(2), before_sleep=before_sleep_log(logger, logging.WARNING))
 async def get_user(user_id):
     async with httpx.AsyncClient() as client:
         token_data = await client.get(f"http://valet-key-sidecar:8089/?scope=read")
@@ -22,7 +28,8 @@ async def get_user(user_id):
         if data.get("detail"):
             raise HTTPException(status_code=500, detail="Este usuario no existe")
         return data
-
+        
+@retry(stop=stop_after_attempt(4), wait=wait_fixed(2), before_sleep=before_sleep_log(logger, logging.WARNING))
 async def get_songs(playlist):
     async with httpx.AsyncClient() as client:
         songs = []
@@ -42,6 +49,7 @@ async def get_songs(playlist):
     
     return songs    
 
+@retry(stop=stop_after_attempt(4), wait=wait_fixed(2), before_sleep=before_sleep_log(logger, logging.WARNING))
 async def get_artist(songs):
     async with httpx.AsyncClient() as client:
         for artist in songs:
@@ -58,6 +66,7 @@ async def get_artist(songs):
             artist.pop('artistID')
             artist.pop('albumID')
 
+@retry(stop=stop_after_attempt(4), wait=wait_fixed(2), before_sleep=before_sleep_log(logger, logging.WARNING))
 async def get_song(song_id):
     async with httpx.AsyncClient() as client:
 
@@ -69,6 +78,44 @@ async def get_song(song_id):
             raise HTTPException(status_code=500, detail="Esta cancion no existe")
         return data
     
+async def safe_get_user(user_id):
+    try:
+        return await get_user(user_id)
+    
+    except RetryError as e:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Error al obtener usuario después de varios intentos: {str(e.last_attempt.exception())}"
+        )
+
+async def safe_get_songs(playlist):
+    try:
+        return await get_songs(playlist)
+    
+    except RetryError as e:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Error al obtener canciones después de varios intentos: {str(e.last_attempt.exception())}"
+        )
+
+async def safe_get_artist(songs):
+    try:
+        return await get_artist(songs)
+    
+    except RetryError as e:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Error al obtener artistas después de varios intentos: {str(e.last_attempt.exception())}"
+        )
+
+async def safe_get_song(song_id):
+    try:
+        return await get_song(song_id)
+    except RetryError as e:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Error al obtener la canción después de varios intentos: {str(e.last_attempt.exception())}"
+        )
 
 # METODO PARA LA BD DE READ
 
