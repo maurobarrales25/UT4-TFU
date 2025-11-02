@@ -1,5 +1,6 @@
 package AndisUT2.ArtistAPI.controller;
 
+import AndisUT2.ArtistAPI.dto.DTOAlbumCommand;
 import AndisUT2.ArtistAPI.model.Album;
 import AndisUT2.ArtistAPI.service.command.AlbumService;
 import AndisUT2.ArtistAPI.service.query.AlbumQueryService;
@@ -37,8 +38,8 @@ public class AlbumController {
     }
 
     @GetMapping("by-id-command")
-    public ResponseEntity<Album> getAlbumByIdCommand(@RequestParam int id){
-        Album album = albumService.getAlbumById(id);
+    public ResponseEntity<DTOAlbumCommand> getAlbumByIdCommand(@RequestParam int id){
+        DTOAlbumCommand album = albumService.getAlbumSongs(id);
         return ResponseEntity.ok(album);
     }
 

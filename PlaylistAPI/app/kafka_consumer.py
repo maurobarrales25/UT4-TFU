@@ -31,11 +31,11 @@ def wait_for_topics(bootstrap_servers, topics, timeout=30):
         time.sleep(2)
     raise Exception(f"Topics no disponibles después de {timeout} segundos: {topics}")
 
-async def consume_artists():
+async def consume():
     print("[START] Iniciando consumidor de Kafka...")
     max_retries = 10
     retry_delay = 5
-    topics = ['artist-update', 'album-update', 'user-update']
+    topics = ['artist-update', 'album-update', 'user-update', 'song-update']
 
     consumer_conf = {
         'bootstrap.servers': 'kafka-broker:9092',
@@ -101,4 +101,4 @@ async def consume_artists():
 
 
 if __name__ == "__main__":
-    asyncio.run(consume_artists())
+    asyncio.run(consume())

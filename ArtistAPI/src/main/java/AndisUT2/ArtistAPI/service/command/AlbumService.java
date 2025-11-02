@@ -1,5 +1,6 @@
 package AndisUT2.ArtistAPI.service.command;
 
+import AndisUT2.ArtistAPI.dto.DTOAlbumCommand;
 import AndisUT2.ArtistAPI.events.DTOevents.domainEvents.DomainAlbumCreateEvent;
 import AndisUT2.ArtistAPI.events.DTOevents.domainEvents.DomainAlbumUpdateEvent;
 import AndisUT2.ArtistAPI.events.DTOevents.kafkaEvents.AlbumUpdateEvent;
@@ -7,7 +8,9 @@ import AndisUT2.ArtistAPI.events.domainlEventPublisher.DomainEventPublisher;
 import AndisUT2.ArtistAPI.events.producer.AlbumProducer;
 import AndisUT2.ArtistAPI.model.Album;
 import AndisUT2.ArtistAPI.model.Artist;
+import AndisUT2.ArtistAPI.model.Song;
 import AndisUT2.ArtistAPI.repository.command.AlbumRepository;
+import AndisUT2.ArtistAPI.repository.command.SongRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,13 +24,15 @@ public class AlbumService {
     private final ArtistService artistService;
     private final AlbumProducer albumProducer;
     private final DomainEventPublisher domainEventPublisher;
+    private final SongRepository songRepository;
 
 
-    public AlbumService(AlbumRepository albumRepository, ArtistService artistService, AlbumProducer albumProducer, DomainEventPublisher domainEventPublisher) {
+    public AlbumService(AlbumRepository albumRepository, ArtistService artistService, AlbumProducer albumProducer, DomainEventPublisher domainEventPublisher, SongRepository songRepository) {
         this.albumRepository = albumRepository;
         this.artistService = artistService;
         this.albumProducer = albumProducer;
         this.domainEventPublisher = domainEventPublisher;
+        this.songRepository = songRepository;
     }
 
     public Album getAlbumById(int id){
@@ -58,6 +63,14 @@ public class AlbumService {
 
     public List<Album> getAlbumsByArtistId(int artistId){
         return albumRepository.getAlbumsByArtistId(artistId);
+    }
+
+    public DTOAlbumCommand getAlbumSongs(int albumId){
+        DTOAlbumCommand dto = albumRepository.getAlbumWithArtistById(albumId);
+
+        List<Song> songs = songRepository.getSongsByAlbumID(albumId);
+        dto.setSongs(songs);
+        return dto;
     }
 
     private void publishAlbumCreateEvent(Album album){

@@ -79,12 +79,14 @@ public class KafkaConfig {
                 .configs(Map.of("min.insync.replicas", "2"))
                 .build();
     }
+
     @Bean
-    public NewTopic userUpdateTopic() {
-        return TopicBuilder.name("user-update")
+    public NewTopic songUpdateTopic() {
+        return TopicBuilder.name("song-update")
                 .partitions(3)
                 .replicas(1)
                 .configs(Map.of("min.insync.replicas", "2"))
                 .build();
     }
+
 }
