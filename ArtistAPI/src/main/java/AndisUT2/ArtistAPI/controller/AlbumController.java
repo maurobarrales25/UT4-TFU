@@ -5,6 +5,7 @@ import AndisUT2.ArtistAPI.model.Album;
 import AndisUT2.ArtistAPI.service.command.AlbumService;
 import AndisUT2.ArtistAPI.service.query.AlbumQueryService;
 import AndisUT2.ArtistAPI.view.AlbumView;
+import io.micrometer.core.annotation.Timed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

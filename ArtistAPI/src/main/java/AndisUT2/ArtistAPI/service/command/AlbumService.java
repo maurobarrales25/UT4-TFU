@@ -11,6 +11,7 @@ import AndisUT2.ArtistAPI.model.Artist;
 import AndisUT2.ArtistAPI.model.Song;
 import AndisUT2.ArtistAPI.repository.command.AlbumRepository;
 import AndisUT2.ArtistAPI.repository.command.SongRepository;
+import io.micrometer.core.annotation.Timed;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -34,7 +35,7 @@ public class AlbumService {
         this.domainEventPublisher = domainEventPublisher;
         this.songRepository = songRepository;
     }
-
+    
     public Album getAlbumById(int id){
         Album album = albumRepository.getAlbumById(id);
 
@@ -55,7 +56,6 @@ public class AlbumService {
         }
         return album;
     }
-
 
     public List<Album> getAllAlbums(){
         return albumRepository.getAllAlbums();
