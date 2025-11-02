@@ -51,6 +51,9 @@ async def get_artist(songs):
             response2 = await client.get(f"http://artist-api:8080/album/by-id-command?id={artist.get('albumID')}")
             data_album = response2.json()
             data_album.pop('artistId')
+            data_album.pop('songs')
+            data_album.pop('artistName')
+            print(data_album)
             artist["album"] = data_album
             artist.pop('artistID')
             artist.pop('albumID')
