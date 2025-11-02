@@ -2,13 +2,14 @@ package AndisUT2.ArtistAPI.service.command;
 
 import AndisUT2.ArtistAPI.events.DTOevents.domainEvents.DomainSongCreateEvent;
 import AndisUT2.ArtistAPI.events.DTOevents.domainEvents.DomainSongUpdateEvent;
+import AndisUT2.ArtistAPI.events.DTOevents.kafkaEvents.SongUpdatedEvent;
 import AndisUT2.ArtistAPI.events.domainlEventPublisher.DomainEventPublisher;
+import AndisUT2.ArtistAPI.events.producer.SongProducer;
 import AndisUT2.ArtistAPI.model.Album;
 import AndisUT2.ArtistAPI.model.Artist;
 import AndisUT2.ArtistAPI.model.Song;
 import AndisUT2.ArtistAPI.repository.command.SongRepository;
 import AndisUT2.ArtistAPI.repository.query.SongReadRepository;
-import AndisUT2.ArtistAPI.view.SongView;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,18 +19,18 @@ import java.util.List;
 @Service
 public class SongService {
 
-    private final SongReadRepository songReadRepository;
     private SongRepository songRepository;
     private ArtistService artistService;
     private AlbumService albumService;
     private final DomainEventPublisher domainPublisher;
+    private final SongProducer songProducer;
 
-    public SongService(SongRepository songRepository, ArtistService artistService, AlbumService albumService, DomainEventPublisher domainPublisher, SongReadRepository songReadRepository) {
+    public SongService(SongRepository songRepository, ArtistService artistService, AlbumService albumService, DomainEventPublisher domainPublisher, SongProducer songProducer) {
         this.songRepository = songRepository;
         this.artistService = artistService;
         this.albumService = albumService;
         this.domainPublisher = domainPublisher;
-        this.songReadRepository = songReadRepository;
+        this.songProducer = songProducer;
     }
 
     public Song getSongByIdCommand(int id) {
@@ -69,7 +70,7 @@ public class SongService {
 
     public void publishSongCreate(Song song, Artist artist, Album album) {
         DomainSongCreateEvent songCreate = new DomainSongCreateEvent(
-                song.getSongID(), song.getSongName(),
+                song.getSongId(), song.getSongName(),
                 song.getArtistID(),artist.getName(),
                 album.getAlbumId(), album.getAlbumName());
 
@@ -107,7 +108,7 @@ public class SongService {
         }
 
         DomainSongUpdateEvent event = new DomainSongUpdateEvent();
-        event.setSongId(song.getSongID());
+        event.setSongId(song.getSongId());
         event.setSongName(song.getSongName());
         event.setArtistId(song.getArtistID());
         event.setArtistName(artist.getName());
@@ -126,9 +127,25 @@ public class SongService {
             throw new RuntimeException("No se puede actualizar  la canción: " + e.getMessage());
         }
 
+        Artist artist = artistService.getArtistByIdCommandDB(song.getArtistID());
+        Album album = albumService.getAlbumById(song.getAlbumID());
+
         song.setSongName(name);
         songRepository.updateSong(song);
         publishSongUpdate(song);
+
+        SongUpdatedEvent event = new SongUpdatedEvent(
+                song.getSongId(),
+                song.getSongName(),
+                song.getArtistID(),
+                artist.getName(),
+                album.getAlbumId(),
+                album.getAlbumName()
+        );
+
+        String kafkaKey = String.format("song-%d", song.getSongId());
+        songProducer.send("song-update", kafkaKey, event);
+
         return song;
     }
 }

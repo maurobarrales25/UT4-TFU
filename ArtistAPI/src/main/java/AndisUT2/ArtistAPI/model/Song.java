@@ -2,13 +2,13 @@ package AndisUT2.ArtistAPI.model;
 
 public class Song {
 
-    private int songID;
+    private int songId;
     private String songName;
     private int artistID;
     private int albumID;
 
-    public Song(int songID, String songName, int artistID, int albumID) {
-        this.songID = songID;
+    public Song(int songId, String songName, int artistID, int albumID) {
+        this.songId = songId;
         this.songName = songName;
         this.artistID = artistID;
         this.albumID = albumID;
@@ -22,12 +22,12 @@ public class Song {
 
     public Song(){}
 
-    public int getSongID() {
-        return songID;
+    public int getSongId() {
+        return songId;
     }
 
-    public void setSongID(int songID) {
-        this.songID = songID;
+    public void setSongId(int songId) {
+        this.songId = songId;
     }
 
     public String getSongName() {

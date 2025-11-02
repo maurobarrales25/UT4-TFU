@@ -20,14 +20,14 @@ public class SongRepository {
 
     private  static final RowMapper<Song> songMapper = (rs, rowNum) -> {
         Song song = new Song();
-        song.setSongID(rs.getInt("song_id"));
+        song.setSongId(rs.getInt("song_id"));
         song.setSongName(rs.getString("song_name"));
         song.setArtistID(rs.getInt("artist_id"));
         song.setAlbumID(rs.getInt("album_id"));
         return song;
     };
 
-    public Song getSongByID(int songID) {
+    public Song getSongByID(int songId) {
         String sql = "select * from song where song_id=?";
         return jdbcTemplate.queryForObject(sql, songMapper, songID);
     };
@@ -65,7 +65,7 @@ public class SongRepository {
 
         Number key = keyHolder.getKey();
         if (key != null) {
-            song.setSongID(key.intValue());
+            song.setSongId(key.intValue());
         } else {
             throw new RuntimeException("No se pudo obtener el ID generado de la canción");
         }
@@ -75,12 +75,12 @@ public class SongRepository {
 
     public Song updateSong(Song song) {
         String sql = "UPDATE song SET song_name = ?, artist_id = ?, album_id = ? WHERE song_id=?";
-        int rows = jdbcTemplate.update(sql, song.getSongName(), song.getArtistID(), song.getAlbumID(), song.getSongID());
+        int rows = jdbcTemplate.update(sql, song.getSongName(), song.getArtistID(), song.getAlbumID(), song.getSongId());
 
         if (rows > 0) {
-            return getSongByID(song.getSongID());
+            return getSongByID(song.getSongId());
         } else {
-            throw new RuntimeException("No se pudo actualizar la canción con ID " + song.getSongID());
+            throw new RuntimeException("No se pudo actualizar la canción con ID " + song.getSongId());
         }
     }
 

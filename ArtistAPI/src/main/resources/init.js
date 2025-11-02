@@ -7,11 +7,83 @@ db.artists.insertMany([
 ]);
 
 db.albums.insertMany([
-  { _id: 1, albumName: "Echoes of Silence Patience and Grace", artistId: 2, artistName: "Foo Fighters" },
-  { _id: 2, albumName: "Wasting Light", artistId: 2, artistName: "Foo Fighters" },
-  { _id: 3, albumName: "There Is Nothing Left to Lose", artistId: 2, artistName: "Foo Fighters" },
-  { _id: 4, albumName: "The Colour and the Shape", artistId: 2, artistName: "Foo Fighters" },
-  { _id: 5, albumName: "1989", artistId: 3, artistName: "Taylor Swift" }
+  { _id: 1, albumName: "Echoes of Silence Patience and Grace", artistId: 2, artistName: "Foo Fighters",
+    songs: [
+      { songId: 1, songName: "The Pretender" },
+      { songId: 2, songName: "Let It Die" },
+      { songId: 3, songName: "Erase/Replace" },
+      { songId: 4, songName: "Long Road to Ruin" },
+      { songId: 5, songName: "Come Alive" },
+      { songId: 6, songName: "Stranger Things Have Happened" },
+      { songId: 7, songName: "Cheer Up, Boys (Your Make Up Is Running)" },
+      { songId: 8, songName: "Summer's End" },
+      { songId: 9, songName: "Ballad of the Beaconsfield Miners" },
+      { songId: 10, songName: "Statues" },
+      { songId: 11, songName: "Home" }
+    ]
+  },
+  { _id: 2, albumName: "Wasting Light", artistId: 2, artistName: "Foo Fighters",
+    songs: [
+      { songId: 12, songName: "Bridge Burning" },
+      { songId: 13, songName: "Rope" },
+      { songId: 14, songName: "Dear Rosemary" },
+      { songId: 15, songName: "White Limo" },
+      { songId: 16, songName: "Arlandria" },
+      { songId: 17, songName: "These Days" },
+      { songId: 18, songName: "Back & Forth" },
+      { songId: 19, songName: "A Matter of Time" },
+      { songId: 20, songName: "Miss the Misery" },
+      { songId: 21, songName: "I Should Have Known" },
+      { songId: 22, songName: "Walk" }
+    ]
+  },
+  { _id: 3, albumName: "There Is Nothing Left to Lose", artistId: 2, artistName: "Foo Fighters",
+    songs: [
+      { songId: 23, songName: "Stacked Actors" },
+      { songId: 24, songName: "Breakout" },
+      { songId: 25, songName: "Learn to Fly" },
+      { songId: 26, songName: "Gimme Stitches" },
+      { songId: 27, songName: "Aurora" },
+      { songId: 28, songName: "Next Year" },
+      { songId: 29, songName: "Headwires" },
+      { songId: 30, songName: "Generator" },
+      { songId: 31, songName: "M.I.A." },
+      { songId: 32, songName: "Aint It the Life" }
+    ]
+  },
+  { _id: 4, albumName: "The Colour and the Shape", artistId: 2, artistName: "Foo Fighters",
+    songs: [
+      { songId: 33, songName: "Doll" },
+      { songId: 34, songName: "Monkey Wrench" },
+      { songId: 35, songName: "Hey, Johnny Park!" },
+      { songId: 36, songName: "My Poor Brain" },
+      { songId: 37, songName: "Wind Up" },
+      { songId: 38, songName: "Up in Arms" },
+      { songId: 39, songName: "My Hero" },
+      { songId: 40, songName: "Everlong" },
+      { songId: 41, songName: "February Stars" },
+      { songId: 42, songName: "Walking After You" },
+      { songId: 43, songName: "New Way Home" },
+      { songId: 44, songName: "Finest Hour" }
+    ]
+  },
+  { _id: 5, albumName: "1989", artistId: 3, artistName: "Taylor Swift",
+    songs: [
+      { songId: 45, songName: "Welcome to New York" },
+      { songId: 46, songName: "Blank Space" },
+      { songId: 47, songName: "Style" },
+      { songId: 48, songName: "Out of the Woods" },
+      { songId: 49, songName: "All You Had to Do Was Stay" },
+      { songId: 50, songName: "Shake It Off" },
+      { songId: 51, songName: "I Wish You Would" },
+      { songId: 52, songName: "Bad Blood" },
+      { songId: 53, songName: "Wildest Dreams" },
+      { songId: 54, songName: "How You Get the Girl" },
+      { songId: 55, songName: "This Love" },
+      { songId: 56, songName: "I Know Places" },
+      { songId: 57, songName: "Clean" }
+    ]
+  }
 ]);
 
 db.songs.insertMany([

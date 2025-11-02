@@ -75,7 +75,7 @@ public class ArtistService {
         domainPublisher.publishEvent(domainEvent);
 
         ArtistUpdateEvent kafkaEvent = ArtistUpdateMapper.INSTANCE.toKafkaEvent(domainEvent);
-        String kafkaKey = "artist-" + artist.getArtistId();
+        String kafkaKey = String.format("artist-%d", artist.getArtistId());
         artistProducer.send("artist-update", kafkaKey, kafkaEvent);
     }
 
