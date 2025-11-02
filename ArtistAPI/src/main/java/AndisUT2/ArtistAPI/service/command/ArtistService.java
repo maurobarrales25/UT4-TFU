@@ -1,4 +1,4 @@
-package AndisUT2.ArtistAPI.service;
+package AndisUT2.ArtistAPI.service.command;
 
 import AndisUT2.ArtistAPI.events.DTOevents.domainEvents.DomainArtistCreateEvent;
 import AndisUT2.ArtistAPI.events.DTOevents.domainEvents.DomainArtistUpdateEvent;
@@ -29,7 +29,18 @@ public class ArtistService {
         this.domainPublisher = domainPublisher;
     }
 
-    public Artist getArtistByName(String name){
+    public Artist getArtistByIdCommandDB(int id){
+        Artist artist = artistRepository.getArtistById(id);
+
+        if(artist == null){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Artista no encontrado con ID: " + id);
+        }
+        return artist;
+    }
+
+    public Artist getArtistByNameCommandDB(String name){
         Artist artist = artistRepository.getArtistByName(name);
 
         if(artist == null){
@@ -40,20 +51,10 @@ public class ArtistService {
         return artist;
     }
 
-    public List<Artist> getAllArtists(){
+    public List<Artist> getAllArtistsCommandDB(){
         return artistRepository.getAllArtists();
     }
 
-    public Artist getArtistById(int id){
-        Artist artist = artistRepository.getArtistById(id);
-
-        if(artist == null){
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Artista no encontrado con ID: " + id);
-        }
-        return artist;
-    }
 
     public void publishArtistCreateEvent(Artist artist){
         DomainArtistCreateEvent artistCreate = new DomainArtistCreateEvent(artist.getArtistId(),artist.getName());
@@ -80,7 +81,7 @@ public class ArtistService {
 
 
     public Artist updateArtist(int artistId, String newName){
-        Artist artist = getArtistById(artistId);
+        Artist artist = getArtistByIdCommandDB(artistId);
         artist.setName(newName);
         artistRepository.updateArtist(artist);
 

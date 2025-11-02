@@ -1,4 +1,4 @@
-package AndisUT2.ArtistAPI.service;
+package AndisUT2.ArtistAPI.service.command;
 
 import AndisUT2.ArtistAPI.events.DTOevents.domainEvents.DomainAlbumCreateEvent;
 import AndisUT2.ArtistAPI.events.DTOevents.domainEvents.DomainAlbumUpdateEvent;
@@ -30,16 +30,6 @@ public class AlbumService {
         this.domainEventPublisher = domainEventPublisher;
     }
 
-    public Album getAlbumByName(String name){
-        Album album = albumRepository.getAlbumByName(name);
-        if(album == null){
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "No se encontro Album con nombre: " + name);
-        }
-        return album;
-    }
-
     public Album getAlbumById(int id){
         Album album = albumRepository.getAlbumById(id);
 
@@ -47,6 +37,16 @@ public class AlbumService {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     "No se encontro Album con id: " + id);
+        }
+        return album;
+    }
+
+    public Album getAlbumByName(String name){
+        Album album = albumRepository.getAlbumByName(name);
+        if(album == null){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "No se encontro Album con nombre: " + name);
         }
         return album;
     }
@@ -62,7 +62,7 @@ public class AlbumService {
 
     private void publishAlbumCreateEvent(Album album){
         DomainAlbumCreateEvent albumCreate = new DomainAlbumCreateEvent();
-        Artist artist = artistService.getArtistById(album.getArtistId());
+        Artist artist = artistService.getArtistByIdCommandDB(album.getArtistId());
 
         albumCreate.setAlbumId(album.getAlbumId());
         albumCreate.setAlbumName(album.getAlbumName());
@@ -72,7 +72,7 @@ public class AlbumService {
     }
 
     public Album saveAlbum(String name, String artistName){
-       Artist artist = artistService.getArtistByName(artistName);
+       Artist artist = artistService.getArtistByNameCommandDB(artistName);
 
        Album album = new Album(name, artist.getArtistId());
        albumRepository.saveAlbum(album);
@@ -82,7 +82,7 @@ public class AlbumService {
 
     private void publishAlbumUpdateEvent(Album album){
         DomainAlbumUpdateEvent update = new DomainAlbumUpdateEvent();
-        Artist artist = artistService.getArtistById(album.getArtistId());
+        Artist artist = artistService.getArtistByIdCommandDB(album.getArtistId());
 
         update.setAlbumId(album.getAlbumId());
         update.setAlbumName(album.getAlbumName());
@@ -101,7 +101,7 @@ public class AlbumService {
         album.setAlbumName(newName);
         albumRepository.updateAlbum(album);
 
-        Artist artist = artistService.getArtistById(album.getArtistId());
+        Artist artist = artistService.getArtistByIdCommandDB(album.getArtistId());
         AlbumUpdateEvent event= new AlbumUpdateEvent(album.getAlbumId(),album.getAlbumName(),
                 artist.getArtistId(), artist.getName());
 
