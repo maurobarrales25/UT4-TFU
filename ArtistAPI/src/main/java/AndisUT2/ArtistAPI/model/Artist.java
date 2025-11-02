@@ -2,11 +2,11 @@ package AndisUT2.ArtistAPI.model;
 
 public class Artist {
 
-    private int artistID;
+    private int artistId;
     private String name;
 
-    public Artist(int artistID, String name) {
-        this.artistID = artistID;
+    public Artist(int artistId, String name) {
+        this.artistId = artistId;
         this.name = name;
     }
 
@@ -16,12 +16,12 @@ public class Artist {
 
     public Artist() {}
 
-    public int getArtistID() {
-        return artistID;
+    public int getArtistId() {
+        return artistId;
     }
 
-    public void setArtistID(int artistID) {
-        this.artistID = artistID;
+    public void setArtistId(int artistId) {
+        this.artistId = artistId;
     }
 
     public String getName() {

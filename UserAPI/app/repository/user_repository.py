@@ -32,3 +32,16 @@ class UserRepository:
         cur.close()
         conn.close()
         return {**user.dict(), "id": new_id}
+    
+    def update(self, id: int, user: UserCreate):
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute(
+            "UPDATE users SET name=%s, email=%s WHERE id=%s RETURNING id, name, email",
+            (user.name, user.email, id)
+        )
+        updated_user = cur.fetchone()
+        conn.commit()
+        cur.close()
+        conn.close()
+        return updated_user

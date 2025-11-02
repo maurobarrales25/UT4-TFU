@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   # ---------------- API GATEWAY ----------------
   api-gateway:
@@ -22,6 +20,8 @@ services:
       - ./ArtistAPI/.env
     depends_on:
       - artist-db
+      - artist-mongo
+      - kafka-broker
 
   artist-db:
     image: mysql:8.0
@@ -33,6 +33,19 @@ services:
     ports:
       - "${MYSQL_PORT}:3306"
 
+  artist-mongo:
+    image: mongo:latest
+    container_name: artist-mongo
+    restart: always
+    ports:
+      - "${ARTIST_MONGO_PORT}:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${ARTIST_MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${ARTIST_MONGO_PASSWORD}
+    volumes:
+      - artist-mongo-data:/data/db
+      - ./ArtistAPI/src/main/resources:/docker-entrypoint-initdb.d
+
   # ---------------- API DE USUARIOS ----------------
   user-api:
     build: ./UserAPI
@@ -43,6 +56,7 @@ services:
       - ./UserAPI/.env
     depends_on:
       - user-db
+      - kafka-broker
 
   user-db:
     image: postgres:17
@@ -67,6 +81,8 @@ services:
       - "${PLAYLIST_API_PORT}:8080"
     depends_on:
       - mongo
+      - kafka-broker
+      - artist-api
     env_file:
       - ./.env
     volumes:
@@ -83,22 +99,9 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
     volumes:
       - mongo_data:/data/db
+      - ./PlaylistAPI/mongo-init:/docker-entrypoint-initdb.d
 
-  playlist-consumer:
-    build:
-      context: ./PlaylistAPI
-      dockerfile: Dockerfile_consumer
-    container_name: playlistConsumer
-    restart: always
-    depends_on:
-      - kafka-broker
-    env_file:
-      - ./.env
-    volumes:
-      - ./PlaylistAPI/app:/app
-
-
-# ---------------- KAFKA BROKERS ----------------
+  # ---------------- KAFKA BROKERS ----------------
   kafka-broker:
     image: apache/kafka:latest
     container_name: broker1
@@ -122,18 +125,26 @@ services:
     volumes:
       - kafka_data:/var/lib/kafka/data
     healthcheck:
-      test: ["CMD-SHELL", "kafka-broker-api-versions.sh --bootstrap-server localhost:9092 || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "kafka-broker-api-versions.sh --bootstrap-server localhost:9092 || exit 1",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
 
-
+  # ---------------- Sidecar Valet-Key ----------------
+  valet-key-sidecar:
+    build: ./sidecar-valet-key
+    ports:
+      - "8089:8089"
 
 # ---------------- VOLUMES ----------------
 volumes:
   artist-db-data:
+  artist-mongo-data:
   user-db-data:
   mongo_data:
   kafka_data:
-
