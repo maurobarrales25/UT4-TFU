@@ -29,7 +29,7 @@ public class SongRepository {
 
     public Song getSongByID(int songId) {
         String sql = "select * from song where song_id=?";
-        return jdbcTemplate.queryForObject(sql, songMapper, songID);
+        return jdbcTemplate.queryForObject(sql, songMapper, songId);
     };
 
     public Song getSongByName(String songName) {
