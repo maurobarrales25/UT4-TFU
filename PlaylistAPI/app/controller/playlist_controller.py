@@ -24,6 +24,11 @@ async def get_playlists_by_user_id(user_id: int):
     playlists = await playlist_service.get_playlists_by_user_id(user_id)
     return playlists
 
-@router.post("/")
+@router.post("/command")
 async def save_playlist(playlist: PlaylistCreate):
     return await playlist_service.save_playlist(playlist)
+
+@router.post("/query")
+async def save_playlist_query(playlist: PlaylistCreate):
+    return await playlist_service.save_playlist_query(playlist)
+    

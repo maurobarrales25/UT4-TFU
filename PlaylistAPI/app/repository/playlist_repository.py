@@ -61,14 +61,26 @@ class PlaylistRepository:
     
     async def update_song_from_playlists(self, song):
         result = await db.get_collection("playlist").update_many(
-            {"songs.songID": song}
+            {"songs.songId": song.get('songId')},
+            {
+                "$set": {
+                    "songs.$[elem].songName" : song.get('songName')
+                }
+            },
+            array_filters=[{"elem.songId": song.get('songId')}]
         )
 
         print(result)
 
-    async def update_album_from_playlists(self, album_id):
+    async def update_album_from_playlists(self, album):
         result = await db.get_collection("playlist").update_many(
-            {}
+            {"songs.album.albumId": album.get('albumId')},
+            {
+                "$set": {
+                    "songs.$[elem].album.albumName" : album.get('albumName')
+                }
+            },
+            array_filters=[{"elem.album.albumId" : album.get('albumId')}]
         )
 
         print(result)
