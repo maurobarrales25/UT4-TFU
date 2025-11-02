@@ -8,7 +8,7 @@ producer_conf = {
 producer = Producer(producer_conf)
 
 def send_user_event(event_type: str, user_data: dict):
-    topic = "user-updates"
+    topic = "user-update"
     message = {
         "event": event_type,
         "user": user_data
@@ -17,6 +17,6 @@ def send_user_event(event_type: str, user_data: dict):
     try:
         producer.produce(topic, value=json.dumps(message))
         producer.flush()
-        print(f"Evento publicado {topic}: {message}")
+        print(f"Evento publicado {topic}: {message}") # log de prueba
     except Exception as e:
         print(f"Error enviando mensaje Kafka: {e}")

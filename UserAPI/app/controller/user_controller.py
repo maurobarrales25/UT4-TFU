@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from typing import List
+from app.utils.utils import sidecar_valet_key
 from app.schema.user import User as UserSchema, UserCreate
 from app.service.user_service import UserService
 from app.repository.user_repository import UserRepository
@@ -18,15 +19,15 @@ async def health_check():
     except Exception as e:
         raise HTTPException(status_code=503, detail={"status": "DOWN", "error": str(e)})
 
-@router.get("/users", response_model=List[UserSchema])
-def get_users():
+@router.get("/users", dependencies=[Depends(sidecar_valet_key)], response_model=List[UserSchema])
+async def get_users():
     return user_service.get_all_users()
 
-@router.get("/users/{id}", response_model=UserSchema)
+@router.get("/users/{id}", dependencies=[Depends(sidecar_valet_key)], response_model=UserSchema)
 def get_user_by_id(id: int):
     return user_service.get_user_by_id(id)
 
-@router.post("/users", response_model=UserSchema)
+@router.post("/users", dependencies=[Depends(sidecar_valet_key)], response_model=UserSchema)
 def create_user(user: UserCreate):
     return user_service.create_user(user)
 
