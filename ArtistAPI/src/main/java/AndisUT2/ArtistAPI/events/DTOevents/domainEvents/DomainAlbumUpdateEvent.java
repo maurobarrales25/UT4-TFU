@@ -1,13 +1,15 @@
-package AndisUT2.ArtistAPI.events.DTOevents;
+package AndisUT2.ArtistAPI.events.DTOevents.domainEvents;
 
-public class AlbumUpdateEvent {
+public class DomainAlbumUpdateEvent {
 
     private int albumId;
     private String albumName;
     private int artistId;
     private String artistName;
 
-    public AlbumUpdateEvent(int albumId, String albumName, int artistId, String artistName) {
+    public DomainAlbumUpdateEvent() {}
+
+    public DomainAlbumUpdateEvent(int albumId, String albumName, int artistId, String artistName) {
         this.albumId = albumId;
         this.albumName = albumName;
         this.artistId = artistId;

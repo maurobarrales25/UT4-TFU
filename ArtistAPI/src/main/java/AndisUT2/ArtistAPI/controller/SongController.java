@@ -1,7 +1,9 @@
 package AndisUT2.ArtistAPI.controller;
 
 import AndisUT2.ArtistAPI.model.Song;
-import AndisUT2.ArtistAPI.service.SongService;
+import AndisUT2.ArtistAPI.service.command.SongService;
+import AndisUT2.ArtistAPI.service.query.SongQueryService;
+import AndisUT2.ArtistAPI.view.SongView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,37 +17,77 @@ public class SongController {
     @Autowired
     private SongService songService;
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Song>> getAllSongs() {
-        List<Song> songs = songService.getAllSongs();
+    @Autowired
+    private SongQueryService songQueryService;
+
+    @GetMapping("/all-command")
+    public ResponseEntity<List<Song>> getAllSongsCommandDB() {
+        List<Song> songs = songService.getAllSongsCommandDB();
         return songs.isEmpty()
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.ok(songs);
     }
 
-    @GetMapping("/by-id")
-    public ResponseEntity<Song> getSongById(@RequestParam int id) {
-        Song song = songService.getSongById(id);
-        return ResponseEntity.ok(song);
-    }
-
-    @GetMapping("/by-name")
-    public ResponseEntity<Song> getSongByName(@RequestParam String name) {
-        Song song = songService.getSongByName(name);
-        return ResponseEntity.ok(song);
-    }
-
-    @GetMapping("/by-artist-id")
-    public ResponseEntity <List<Song>> getSongByArtistId(@RequestParam int artistId) {
-        List<Song> songs = songService.getSongsByArtistId(artistId);
+    @GetMapping("/all-query")
+    public ResponseEntity<List<SongView>> getAllSongsQueryDB() {
+        List<SongView> songs = songQueryService.getAllSongsQueryDB();
         return songs.isEmpty()
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.ok(songs);
     }
 
-    @GetMapping("/by-album-id")
-    public ResponseEntity <List<Song>> getSongByAlbumId(@RequestParam int albumId) {
-        List<Song> songs = songService.getSongsByAlbumId(albumId);
+    @GetMapping("/by-id-command")
+    public ResponseEntity<Song> getSongByIdCommandDB(@RequestParam int id) {
+        Song song = songService.getSongByIdCommand(id);
+        return ResponseEntity.ok(song);
+    }
+
+    @GetMapping("/by-id-query")
+    public ResponseEntity<SongView> getSongByIdQueryDB(@RequestParam int id) {
+        SongView song = songQueryService.getSongByIDQueryDB(id);
+        return ResponseEntity.ok(song);
+    }
+
+    @GetMapping("/by-name-command")
+    public ResponseEntity<Song> getSongByNameCommandDB(@RequestParam String name) {
+        Song song = songService.getSongByNameCommandDB(name);
+        return ResponseEntity.ok(song);
+    }
+
+    @GetMapping("/by-name-query")
+    public ResponseEntity<SongView> getSongByNameQueryDB(@RequestParam String name) {
+        SongView song = songQueryService.getSongByNameQueryDB(name);
+        return ResponseEntity.ok(song);
+    }
+
+
+    @GetMapping("/by-artist-id-command")
+    public ResponseEntity <List<Song>> getSongByArtistIdCommandDB(@RequestParam int artistId) {
+        List<Song> songs = songService.getSongsByArtistIdCommandDB(artistId);
+        return songs.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(songs);
+    }
+
+    @GetMapping("/by-artist-id-query")
+    public ResponseEntity <List<SongView>> getSongByArtistIdQueryDB(@RequestParam int artistId) {
+        List<SongView> songs = songQueryService.getSongsByArtistIdQueryDB(artistId);
+        return songs.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(songs);
+    }
+
+    @GetMapping("/by-album-id-command")
+    public ResponseEntity <List<Song>> getSongByAlbumIdCommandDB(@RequestParam int albumId) {
+        List<Song> songs = songService.getSongsByAlbumIdCommandDB(albumId);
+        return songs.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(songs);
+    }
+
+    @GetMapping("/by-album-id-query")
+    public ResponseEntity <List<SongView>> getSongByAlbumIdQuerydDB(@RequestParam int albumId) {
+        List<SongView> songs = songQueryService.getSongsByAlbumIdQueryDB(albumId);
         return songs.isEmpty()
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.ok(songs);

@@ -1,20 +1,16 @@
-package AndisUT2.ArtistAPI.model;
+package AndisUT2.ArtistAPI.events.DTOevents.domainEvents;
 
-public class Artist {
+public class DomainArtistUpdateEvent {
 
     private int artistId;
     private String name;
 
-    public Artist(int artistId, String name) {
+    public DomainArtistUpdateEvent() {}
+
+    public DomainArtistUpdateEvent(int artistId, String name) {
         this.artistId = artistId;
         this.name = name;
     }
-
-    public Artist(String name){
-        this.name = name;
-    }
-
-    public Artist() {}
 
     public int getArtistId() {
         return artistId;
@@ -31,5 +27,4 @@ public class Artist {
     public void setName(String name) {
         this.name = name;
     }
-
 }
