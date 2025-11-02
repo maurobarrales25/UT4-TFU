@@ -3,6 +3,7 @@ echo " Prueba de Retry"
 echo ""
 
 docker stop user-api
+
 echo ""
 
 echo " Probando endpoint que dispara retry."
@@ -11,9 +12,11 @@ echo ""
 
 sleep 5
 
-#Reanuar UserAPI antes del ultimo intento.
+#Reanudar UserAPI antes del ultimo intento.
 echo " Reanudando UserAPI antes del ultimo intento."
+
 docker start user-api
+
 echo ""
 
 sleep 2
@@ -21,7 +24,7 @@ sleep 2
 echo ""
 echo " Ver ultimos 5 logs de playlist-api."
 echo ""
-docker logs --tail 5 playlist-api
+docker logs --tail 7 playlist-api
 echo ""
 
 echo "Fin de la prueba. Presiona ENTER para cerrar."
