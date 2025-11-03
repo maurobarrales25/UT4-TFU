@@ -80,6 +80,28 @@ public class AlbumRepository {
         return album;
     }
 
+    public List<DTOAlbumCommand> getAllAlbumsWithArtists() {
+        String sql = """
+        SELECT 
+            al.album_id AS album_id,
+            al.album_name AS album_name,
+            ar.artist_id AS artist_id,
+            ar.name AS artist_name
+        FROM album al
+        JOIN artist ar ON al.artist_id = ar.artist_id
+    """;
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            DTOAlbumCommand dto = new DTOAlbumCommand();
+            dto.setAlbumId(rs.getInt("album_id"));
+            dto.setAlbumName(rs.getString("album_name"));
+            dto.setArtistId(rs.getInt("artist_id"));
+            dto.setArtistName(rs.getString("artist_name"));
+            dto.setSongs(null);
+            return dto;
+        });
+    }
+
     public DTOAlbumCommand getAlbumWithArtistById(int albumId) {
         String sql = """
         SELECT 
