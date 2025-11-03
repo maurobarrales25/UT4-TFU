@@ -12,11 +12,14 @@ import AndisUT2.ArtistAPI.model.Song;
 import AndisUT2.ArtistAPI.repository.command.AlbumRepository;
 import AndisUT2.ArtistAPI.repository.command.SongRepository;
 import io.micrometer.core.annotation.Timed;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 @Service
 public class AlbumService {
@@ -26,16 +29,22 @@ public class AlbumService {
     private final AlbumProducer albumProducer;
     private final DomainEventPublisher domainEventPublisher;
     private final SongRepository songRepository;
+    private final MeterRegistry meterRegistry;
 
-
-    public AlbumService(AlbumRepository albumRepository, ArtistService artistService, AlbumProducer albumProducer, DomainEventPublisher domainEventPublisher, SongRepository songRepository) {
+    public AlbumService(AlbumRepository albumRepository, ArtistService artistService, AlbumProducer albumProducer, DomainEventPublisher domainEventPublisher, SongRepository songRepository, MeterRegistry meterRegistry) {
         this.albumRepository = albumRepository;
         this.artistService = artistService;
         this.albumProducer = albumProducer;
         this.domainEventPublisher = domainEventPublisher;
         this.songRepository = songRepository;
+        this.meterRegistry = meterRegistry;
     }
-    
+
+    @Timed(
+            value = "command.album.getById",
+            description = "Tiempo de consulta de album por ID en Command DB",
+            percentiles = {0.5, 0.95, 0.99}
+    )
     public Album getAlbumById(int id){
         Album album = albumRepository.getAlbumById(id);
 
@@ -47,6 +56,11 @@ public class AlbumService {
         return album;
     }
 
+    @Timed(
+            value = "command.album.getByName",
+            description = "Tiempo de consulta de album por nombre en Command DB",
+            percentiles = {0.5, 0.95, 0.99}
+    )
     public Album getAlbumByName(String name){
         Album album = albumRepository.getAlbumByName(name);
         if(album == null){
@@ -61,10 +75,37 @@ public class AlbumService {
         return albumRepository.getAllAlbums();
     }
 
+    @Timed(
+            value = "command.album.allWinfo",
+            description = "Tiempo de consulta de albums con toda la informacion en Command DB",
+            percentiles = {0.5, 0.95, 0.99}
+    )
+    public List<DTOAlbumCommand> getAllAlbumsInfo() {
+        List<DTOAlbumCommand> albums = albumRepository.getAllAlbumsWithArtists();
+
+        for (DTOAlbumCommand album : albums) {
+            List<Song> songs = songRepository.getSongsByAlbumID(album.getAlbumId());
+            album.setSongs(songs);
+        }
+
+        return albums;
+    }
+
+    @Timed(
+            value = "command.album.getByArtistId",
+            description = "Tiempo de consulta de albums por artista en Command DB",
+            percentiles = {0.5, 0.95, 0.99}
+    )
     public List<Album> getAlbumsByArtistId(int artistId){
         return albumRepository.getAlbumsByArtistId(artistId);
     }
 
+    @Timed(
+            value = "command.album.getWithSongs",
+            description = "Tiempo de consulta de album con canciones usando JOINS en Command DB",
+            percentiles = {0.5, 0.95, 0.99},
+            extraTags = {"database", "command", "operation", "join"}
+    )
     public DTOAlbumCommand getAlbumSongs(int albumId){
         DTOAlbumCommand dto = albumRepository.getAlbumWithArtistById(albumId);
 

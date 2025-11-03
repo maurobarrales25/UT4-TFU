@@ -150,3 +150,11 @@ db.songs.insertMany([
   { _id: 56, songName: "I Know Places", artistId: 3, artistName: "Taylor Swift", albumId: 5, albumName: "1989" },
   { _id: 57, songName: "Clean", artistId: 3, artistName: "Taylor Swift", albumId: 5, albumName: "1989" }
 ]);
+
+db.artists.createIndex({ artistName: 1 });
+db.albums.createIndex({ artistId: 1 });
+db.albums.createIndex({ artistName: 1 });
+db.albums.createIndex({ "songs.songName": 1 });
+db.songs.createIndex({ albumId: 1 });
+db.songs.createIndex({ artistId: 1 });
+db.songs.createIndex({ songName: 1 });

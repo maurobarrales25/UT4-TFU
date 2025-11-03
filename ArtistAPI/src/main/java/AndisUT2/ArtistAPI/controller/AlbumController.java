@@ -30,6 +30,14 @@ public class AlbumController {
                 : ResponseEntity.ok(albums);
     }
 
+    @GetMapping("all-command-with-info")
+    public ResponseEntity<List<DTOAlbumCommand>> getAllAlbumCommandWithInfo(){
+        List<DTOAlbumCommand> albumCommands = albumService.getAllAlbumsInfo();
+        return albumCommands.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(albumCommands);
+    }
+
     @GetMapping("/all-query")
     public ResponseEntity<List<AlbumView>> getAllAlbumsQuery(){
         List<AlbumView> albums = albumQueryService.getAllAlbumsQueryDB();
